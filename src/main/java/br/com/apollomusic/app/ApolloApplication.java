@@ -1,4 +1,4 @@
-package br.com.apollo.app;
+package br.com.apollomusic.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

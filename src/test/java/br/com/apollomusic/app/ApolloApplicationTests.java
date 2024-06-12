@@ -1,4 +1,4 @@
-package br.com.apollo.app;
+package br.com.apollomusic.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
