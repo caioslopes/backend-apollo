@@ -2,6 +2,11 @@ package br.com.apollo.app.model.entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 @Entity
 @Table(name = "tb_establishment")
 public class Establishment {
@@ -10,30 +15,45 @@ public class Establishment {
     @Column(name = "establishment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String establishmentId;
-    private long ownerId;
-    private String playlistId;
     private String deviceId;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_users_establishment", joinColumns = @JoinColumn(name = "establishment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private long userId;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_blocked_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private String blockedGenres;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private String genres;
     private boolean isOff;
 
-    public Establishment(String establishmentId, long ownerId, String playlistId, String deviceId, long userId, String blockedGenres, String genres, boolean isOff) {
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist;
+
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<User> users = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "tb_blocked_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"))
+    @Column(name = "genre")
+    private Set<String> blockedGenres = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "tb_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"))
+    @MapKeyColumn(name = "genre")
+    @Column(name = "votes")
+    private Map<String, Integer> genres = new HashMap<>();
+
+
+    public Establishment(String establishmentId, String deviceId, boolean isOff, Owner owner, Playlist playlist, Set<User> users, Set<String> blockedGenres, Map<String, Integer> genres) {
         this.establishmentId = establishmentId;
-        this.ownerId = ownerId;
-        this.playlistId = playlistId;
         this.deviceId = deviceId;
-        this.userId = userId;
+        this.isOff = isOff;
+        this.owner = owner;
+        this.playlist = playlist;
+        this.users = users;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
-        this.isOff = isOff;
     }
+
+    public Establishment() {}
 
     public String getEstablishmentId() {
         return establishmentId;
@@ -41,22 +61,6 @@ public class Establishment {
 
     public void setEstablishmentId(String establishmentId) {
         this.establishmentId = establishmentId;
-    }
-
-    public long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getPlaylistId() {
-        return playlistId;
-    }
-
-    public void setPlaylistId(String playlistId) {
-        this.playlistId = playlistId;
     }
 
     public String getDeviceId() {
@@ -67,35 +71,51 @@ public class Establishment {
         this.deviceId = deviceId;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public String getBlockedGenres() {
-        return blockedGenres;
-    }
-
-    public void setBlockedGenres(String blockedGenres) {
-        this.blockedGenres = blockedGenres;
-    }
-
-    public String getGenres() {
-        return genres;
-    }
-
-    public void setGenres(String genres) {
-        this.genres = genres;
-    }
-
     public boolean isOff() {
         return isOff;
     }
 
     public void setOff(boolean off) {
         isOff = off;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<String> getBlockedGenres() {
+        return blockedGenres;
+    }
+
+    public void setBlockedGenres(Set<String> blockedGenres) {
+        this.blockedGenres = blockedGenres;
+    }
+
+    public Map<String, Integer> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Map<String, Integer> genres) {
+        this.genres = genres;
     }
 }

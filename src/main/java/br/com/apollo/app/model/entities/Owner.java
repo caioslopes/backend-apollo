@@ -13,22 +13,22 @@ public class Owner {
     @Column(unique = true)
     private String email;
     private String password;
-    private String establishmentCode;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Establishment establishment;
+
     private String apiAuthCode;
 
-    public Owner(long id, String email, String password, String establishmentCode, String apiAuthCode) {
-        this.ownerId = id;
+
+    public Owner(long ownerId, String email, Establishment establishment, String password, String apiAuthCode) {
+        this.ownerId = ownerId;
         this.email = email;
+        this.establishment = establishment;
         this.password = password;
-        this.establishmentCode = establishmentCode;
         this.apiAuthCode = apiAuthCode;
     }
 
-    public Owner(long id, String email, String password){
-        this.ownerId = id;
-        this.email = email;
-        this.password = password;
-    }
+    public Owner() {}
 
     public long getOwnerId() {
         return ownerId;
@@ -54,12 +54,12 @@ public class Owner {
         this.password = password;
     }
 
-    public String getEstablishmentCode() {
-        return establishmentCode;
+    public Establishment getEstablishment() {
+        return establishment;
     }
 
-    public void setEstablishmentCode(String establishmentCode) {
-        this.establishmentCode = establishmentCode;
+    public void setEstablishment(Establishment establishment) {
+        this.establishment = establishment;
     }
 
     public String getApiAuthCode() {
