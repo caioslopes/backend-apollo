@@ -1,4 +1,4 @@
-package br.com.apollo.app.model.entities;
+package br.com.apollomusic.app.repository.entities;
 
 import jakarta.persistence.*;
 
