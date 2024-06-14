@@ -12,9 +12,7 @@ public class Song {
         this.genre = genre;
     }
 
-    public Song() {
-
-    }
+    public Song() {}
 
     public String getSongId() {
         return songId;

@@ -19,7 +19,7 @@ public class Playlist {
     private Establishment establishment;
 
     @ElementCollection
-    @CollectionTable(name = "tb_songs", joinColumns = @JoinColumn(name = "playlist_id"))
+    @CollectionTable(name = "tb_playlist_songs", joinColumns = @JoinColumn(name = "playlist_id"))
     private Set<Song> songs = new HashSet<>();
 
     public Playlist(long playlistId, Establishment establishment, Set<Song> songs) {
@@ -28,9 +28,7 @@ public class Playlist {
         this.songs = songs;
     }
 
-    public Playlist() {
-
-    }
+    public Playlist() {}
 
     public long getPlaylistId() {
         return playlistId;
