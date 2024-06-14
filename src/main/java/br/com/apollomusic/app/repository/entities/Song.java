@@ -1,4 +1,4 @@
-package br.com.apollo.app.model.entities;
+package br.com.apollomusic.app.repository.entities;
 
 import jakarta.persistence.Embeddable;
 
@@ -12,9 +12,7 @@ public class Song {
         this.genre = genre;
     }
 
-    public Song() {
-
-    }
+    public Song() {}
 
     public String getSongId() {
         return songId;
