@@ -14,7 +14,7 @@ public class Establishment {
     @Id
     @Column(name = "establishment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String establishmentId;
+    private Long establishmentId;
     private String deviceId;
     private boolean isOff;
 
@@ -42,7 +42,7 @@ public class Establishment {
     private Map<String, Integer> genres = new HashMap<>();
 
 
-    public Establishment(String establishmentId, String deviceId, boolean isOff, Owner owner, Playlist playlist, Set<User> users, Set<String> blockedGenres, Map<String, Integer> genres) {
+    public Establishment(Long establishmentId, String deviceId, boolean isOff, Owner owner, Playlist playlist, Set<User> users, Set<String> blockedGenres, Map<String, Integer> genres) {
         this.establishmentId = establishmentId;
         this.deviceId = deviceId;
         this.isOff = isOff;
@@ -55,11 +55,11 @@ public class Establishment {
 
     public Establishment() {}
 
-    public String getEstablishmentId() {
+    public Long getEstablishmentId() {
         return establishmentId;
     }
 
-    public void setEstablishmentId(String establishmentId) {
+    public void setEstablishmentId(Long establishmentId) {
         this.establishmentId = establishmentId;
     }
 

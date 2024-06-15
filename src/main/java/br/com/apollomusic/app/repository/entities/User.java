@@ -14,6 +14,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
+    private String userName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "establishment_id")
     private Establishment establishment;
@@ -25,9 +27,16 @@ public class User {
 
     public User() {}
 
-    public User(Long userId, Establishment establishment, Set<String> genres) {
+    public User(Long userId, Establishment establishment, Set<String> genres, String userName) {
         this.userId = userId;
         this.establishment = establishment;
+        this.genres = genres;
+        this.userName = userName;
+    }
+
+    public User(Establishment establishment, String userName, Set<String> genres) {
+        this.establishment = establishment;
+        this.userName = userName;
         this.genres = genres;
     }
 
@@ -53,5 +62,13 @@ public class User {
 
     public void setGenres(Set<String> genres) {
         this.genres = genres;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
