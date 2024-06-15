@@ -2,6 +2,9 @@ package br.com.apollomusic.app.repository.entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "tb_owner")
 public class Owner {
@@ -10,6 +13,7 @@ public class Owner {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "owner_id")
     private long ownerId;
+
     @Column(unique = true)
     private String email;
     private String password;
@@ -19,16 +23,23 @@ public class Owner {
 
     private String apiAuthCode;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tb_owners_roles",
+            joinColumns = @JoinColumn(name = "owner_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    public Owner(long ownerId, String email, Establishment establishment, String password, String apiAuthCode) {
-        this.ownerId = ownerId;
+    public  Owner() {}
+
+    public Owner(String email, String password, Establishment establishment, String apiAuthCode, Set<Role> roles) {
         this.email = email;
-        this.establishment = establishment;
         this.password = password;
+        this.establishment = establishment;
         this.apiAuthCode = apiAuthCode;
+        this.roles = roles;
     }
-
-    public Owner() {}
 
     public long getOwnerId() {
         return ownerId;
@@ -68,5 +79,13 @@ public class Owner {
 
     public void setApiAuthCode(String apiAuthCode) {
         this.apiAuthCode = apiAuthCode;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

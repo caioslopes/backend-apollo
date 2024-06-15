@@ -3,6 +3,7 @@ package br.com.apollomusic.app.repository.entities;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -10,8 +11,8 @@ import java.util.Set;
 public class User {
 
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     private Long userId;
 
     private String userName;
@@ -25,19 +26,29 @@ public class User {
     @Column(name = "genre")
     private Set<String> genres = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tb_users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     public User() {}
 
-    public User(Long userId, Establishment establishment, Set<String> genres, String userName) {
+    public User(Long userId, String userName, Establishment establishment, Set<String> genres, Set<Role> roles) {
         this.userId = userId;
+        this.userName = userName;
         this.establishment = establishment;
         this.genres = genres;
-        this.userName = userName;
+        this.roles = roles;
     }
 
-    public User(Establishment establishment, String userName, Set<String> genres) {
+    public User(Establishment establishment, String userName, Set<String> genres, Set<Role> roles) {
         this.establishment = establishment;
         this.userName = userName;
         this.genres = genres;
+        this.roles = roles;
     }
 
     public Long getUserId() {
@@ -46,6 +57,14 @@ public class User {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Establishment getEstablishment() {
@@ -64,11 +83,11 @@ public class User {
         this.genres = genres;
     }
 
-    public String getUserName() {
-        return userName;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
