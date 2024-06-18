@@ -13,6 +13,7 @@ import br.com.apollomusic.app.repository.entities.Establishment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,7 +27,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final EstablishmentRepository establishmentRepository;
-    private final RoleRepository roleRepository; // Add a RoleRepository to fetch roles
+    private final RoleRepository roleRepository;
     private final JwtUtil jwtUtil;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -77,14 +78,14 @@ public class AuthService {
 
             Owner owner = ownerOpt.get();
 
-            if (!owner.getEstablishment().equals(establishment)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ErrorResDto(HttpStatus.UNAUTHORIZED.value(), "Owner não pertence ao estabelecimento especificado"));
-            }
+//            if (!owner.getEstablishment().equals(establishment)) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                        .body(new ErrorResDto(HttpStatus.UNAUTHORIZED.value(), "Owner não pertence ao estabelecimento especificado"));
+//            }
 
             if (!passwordEncoder.matches(ownerReqDto.password(), owner.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ErrorResDto(HttpStatus.UNAUTHORIZED.value(), "Senha inválida"));
+                        .body(new BadCredentialsException("Senha inválida"));
             }
 
             String token = jwtUtil.createTokenOwner(owner);
