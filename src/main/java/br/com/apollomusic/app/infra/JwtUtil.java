@@ -27,7 +27,7 @@ public class JwtUtil {
         Claims claims = Jwts.claims().setSubject(user.getUserName());
         claims.put("establishmentId", user.getEstablishment().getEstablishmentId());
         claims.put("genres", user.getGenres());
-        claims.put("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        claims.put("scope", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
         return Jwts.builder()
@@ -40,7 +40,7 @@ public class JwtUtil {
     public String createTokenOwner(Owner owner) {
         Claims claims = Jwts.claims().setSubject(owner.getEmail());
         claims.put("establishmentId", owner.getEstablishment().getEstablishmentId());
-        claims.put("roles",  owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
         return Jwts.builder()
