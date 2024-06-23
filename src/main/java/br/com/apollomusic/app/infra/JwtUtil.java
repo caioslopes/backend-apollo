@@ -21,7 +21,7 @@ public class JwtUtil {
     @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
 
-    private static final long accessTokenValidity = 60 * 1000;
+    private static final long accessTokenValidity = 60;
 
     public String createTokenUser(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUserName());
@@ -29,7 +29,7 @@ public class JwtUtil {
         claims.put("genres", user.getGenres());
         claims.put("scope", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 2));
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
@@ -42,7 +42,7 @@ public class JwtUtil {
         claims.put("establishmentId", owner.getEstablishment().getEstablishmentId());
         claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 20));
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)

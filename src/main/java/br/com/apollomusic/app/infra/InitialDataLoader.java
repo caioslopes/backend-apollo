@@ -18,7 +18,7 @@ public class InitialDataLoader implements CommandLineRunner {
     private final OwnerRepository ownerRepository;
     private final EstablishmentRepository establishmentRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder; // Inject PasswordEncoder
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
