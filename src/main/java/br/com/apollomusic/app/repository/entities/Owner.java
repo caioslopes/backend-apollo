@@ -21,7 +21,6 @@ public class Owner {
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Establishment establishment;
 
-    private String apiAuthCode;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -31,14 +30,23 @@ public class Owner {
     )
     private Set<Role> roles = new HashSet<>();
 
+    private String refreshToken;
+
     public  Owner() {}
 
-    public Owner(String email, String password, Establishment establishment, String apiAuthCode, Set<Role> roles) {
+    public Owner(String email, String password, Establishment establishment,  Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.establishment = establishment;
-        this.apiAuthCode = apiAuthCode;
         this.roles = roles;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public long getOwnerId() {
@@ -73,13 +81,6 @@ public class Owner {
         this.establishment = establishment;
     }
 
-    public String getApiAuthCode() {
-        return apiAuthCode;
-    }
-
-    public void setApiAuthCode(String apiAuthCode) {
-        this.apiAuthCode = apiAuthCode;
-    }
 
     public Set<Role> getRoles() {
         return roles;
