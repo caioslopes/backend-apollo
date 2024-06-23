@@ -78,10 +78,10 @@ public class AuthService {
 
             Owner owner = ownerOpt.get();
 
-//            if (!owner.getEstablishment().equals(establishment)) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                        .body(new ErrorResDto(HttpStatus.UNAUTHORIZED.value(), "Owner não pertence ao estabelecimento especificado"));
-//            }
+            if (!owner.getEstablishment().equals(establishment)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResDto(HttpStatus.UNAUTHORIZED.value(), "Owner não pertence ao estabelecimento especificado"));
+            }
 
             if (!passwordEncoder.matches(ownerReqDto.password(), owner.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
