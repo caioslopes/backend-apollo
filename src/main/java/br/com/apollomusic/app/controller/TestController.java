@@ -39,7 +39,7 @@ public class TestController {
 
     @GetMapping("/apiTest/{accessToken}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<?> getGerens(@PathVariable String accessToken) {
+    public ResponseEntity<?> getGenres(@PathVariable String accessToken) {
 
         RequestPlayer request = new RequestPlayer("device_id");
 

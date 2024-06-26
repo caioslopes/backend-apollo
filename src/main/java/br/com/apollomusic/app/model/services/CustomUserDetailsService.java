@@ -2,8 +2,8 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.repository.OwnerRepository;
 import br.com.apollomusic.app.repository.UserRepository;
-import br.com.apollomusic.app.repository.entities.Owner;
-import br.com.apollomusic.app.repository.entities.User;
+import br.com.apollomusic.app.model.entities.Owner;
+import br.com.apollomusic.app.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

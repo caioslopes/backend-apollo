@@ -1,8 +1,8 @@
 package br.com.apollomusic.app.infra;
 
-import br.com.apollomusic.app.repository.entities.Owner;
-import br.com.apollomusic.app.repository.entities.Role;
-import br.com.apollomusic.app.repository.entities.User;
+import br.com.apollomusic.app.model.entities.Owner;
+import br.com.apollomusic.app.model.entities.Role;
+import br.com.apollomusic.app.model.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
