@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.repository.entities;
+package br.com.apollomusic.app.model.entities;
 
 import jakarta.persistence.*;
 
@@ -13,6 +13,8 @@ public class Owner {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "owner_id")
     private long ownerId;
+
+    private String name;
 
     @Column(unique = true)
     private String email;
@@ -56,6 +58,10 @@ public class Owner {
     public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
     }
+
+    public String getName(){return this.name; }
+
+    public void setNome(String name){ this.name = name; }
 
     public String getEmail() {
         return email;
