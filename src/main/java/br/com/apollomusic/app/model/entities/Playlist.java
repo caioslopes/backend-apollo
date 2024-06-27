@@ -1,6 +1,5 @@
 package br.com.apollomusic.app.model.entities;
 
-
 import jakarta.persistence.*;
 
 import java.util.HashMap;
@@ -13,9 +12,8 @@ import java.util.Set;
 public class Playlist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "playlist_id")
-    private long playlistId;
+    private String playlistId;
 
     @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Establishment establishment;
@@ -35,7 +33,7 @@ public class Playlist {
     @Column(name = "votes")
     private Map<String, Integer> genres = new HashMap<>();
 
-    public Playlist(long playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres) {
+    public Playlist(String playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres) {
         this.playlistId = playlistId;
         this.establishment = establishment;
         this.songs = songs;
@@ -45,11 +43,11 @@ public class Playlist {
 
     public Playlist() {}
 
-    public long getPlaylistId() {
+    public String getPlaylistId() {
         return playlistId;
     }
 
-    public void setPlaylistId(long playlistId) {
+    public void setPlaylistId(String playlistId) {
         this.playlistId = playlistId;
     }
 

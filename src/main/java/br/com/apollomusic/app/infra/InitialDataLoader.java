@@ -43,6 +43,7 @@ public class InitialDataLoader implements CommandLineRunner {
             ownerRepository.save(owner);
 
             Establishment establishment = new Establishment();
+            establishment.setName("Zinho");
             establishment.setOff(true);
             establishment.setOwner(owner);
 
@@ -56,6 +57,7 @@ public class InitialDataLoader implements CommandLineRunner {
             ownerRepository.save(owner2);
 
             Establishment establishment2 = new Establishment();
+            establishment2.setName("AdmAmbient");
             establishment2.setOff(true);
             establishment2.setOwner(owner2);
 
