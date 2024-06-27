@@ -2,8 +2,9 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class EstablishmentService {
     private final EstablishmentRepository establishmentRepository;
 

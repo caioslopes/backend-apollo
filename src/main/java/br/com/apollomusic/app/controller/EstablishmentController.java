@@ -1,25 +1,27 @@
 package br.com.apollomusic.app.controller;
 
-import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.model.services.EstablishmentService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/establishment")
+@RequestMapping("/{establishmentId}")
 public class EstablishmentController {
-    EstablishmentService establishmentService;
+    @Autowired
+    private EstablishmentService establishmentService;
 
 
     @PostMapping("/turnOn")
-    public boolean turnOn(Long establishmentId) {
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public boolean turnOn(@PathVariable Long establishmentId) {
         return establishmentService.turnOn(establishmentId);
     }
 
-    @PostMapping("/turnOff")
-    public boolean turnOff(Long establishmentId) {
-        return establishmentService.turnOff(establishmentId);
-    }
+        @PostMapping("/turnOff")
+        @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+        public boolean turnOff(@PathVariable Long establishmentId) {
+            return establishmentService.turnOff(establishmentId);
+        }
 
 }
