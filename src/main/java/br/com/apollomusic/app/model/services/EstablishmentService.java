@@ -1,7 +1,10 @@
 package br.com.apollomusic.app.model.services;
 
+import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,22 +15,22 @@ public class EstablishmentService {
         this.establishmentRepository = establishmentRepository;
     }
 
-    public boolean turnOn(Long establishmentId){
+    public ResponseEntity<?> turnOn(Long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).get();
         if (establishment.isOff()){
             establishment.setOff(false);
             establishmentRepository.save(establishment);
-            return true;
+            return ResponseEntity.ok(establishment);
         }
-        return false;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao ligar Estabelicimento");
     }
-    public boolean turnOff(Long establishmentId){
+    public ResponseEntity<?> turnOff(Long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).get();
         if (!establishment.isOff()){
             establishment.setOff(true);
             establishmentRepository.save(establishment);
-            return true;
+            return ResponseEntity.ok(establishment);
         }
-        return false;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao desligar Estabelicimento");
     }
 }
