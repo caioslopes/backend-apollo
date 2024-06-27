@@ -18,6 +18,7 @@ public class Establishment {
     private String deviceId;
     private boolean isOff;
 
+    private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
@@ -30,27 +31,15 @@ public class Establishment {
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "tb_blocked_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"))
-    @Column(name = "genre")
-    private Set<String> blockedGenres = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "tb_genres_establishment", joinColumns = @JoinColumn(name = "establishment_id"))
-    @MapKeyColumn(name = "genre")
-    @Column(name = "votes")
-    private Map<String, Integer> genres = new HashMap<>();
-
-
-    public Establishment(Long establishmentId, String deviceId, boolean isOff, Owner owner, Playlist playlist, Set<User> users, Set<String> blockedGenres, Map<String, Integer> genres) {
+    public Establishment(Long establishmentId, String name, String deviceId, boolean isOff, Owner owner, Playlist playlist, Set<User> users) {
         this.establishmentId = establishmentId;
+        this.name = name;
         this.deviceId = deviceId;
         this.isOff = isOff;
         this.owner = owner;
         this.playlist = playlist;
         this.users = users;
-        this.blockedGenres = blockedGenres;
-        this.genres = genres;
     }
 
     public Establishment() {}
@@ -62,6 +51,10 @@ public class Establishment {
     public void setEstablishmentId(Long establishmentId) {
         this.establishmentId = establishmentId;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public String getDeviceId() {
         return deviceId;
@@ -101,21 +94,5 @@ public class Establishment {
 
     public void setUsers(Set<User> users) {
         this.users = users;
-    }
-
-    public Set<String> getBlockedGenres() {
-        return blockedGenres;
-    }
-
-    public void setBlockedGenres(Set<String> blockedGenres) {
-        this.blockedGenres = blockedGenres;
-    }
-
-    public Map<String, Integer> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(Map<String, Integer> genres) {
-        this.genres = genres;
     }
 }

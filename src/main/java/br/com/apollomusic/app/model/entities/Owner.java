@@ -36,7 +36,8 @@ public class Owner {
 
     public  Owner() {}
 
-    public Owner(String email, String password, Establishment establishment,  Set<Role> roles) {
+    public Owner(String name, String email, String password, Establishment establishment,  Set<Role> roles) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.establishment = establishment;
@@ -86,7 +87,6 @@ public class Owner {
     public void setEstablishment(Establishment establishment) {
         this.establishment = establishment;
     }
-
 
     public Set<Role> getRoles() {
         return roles;
