@@ -16,21 +16,36 @@ public class EstablishmentService {
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
-        Establishment establishment = establishmentRepository.findById(establishmentId).get();
-        if (establishment.isOff()){
-            establishment.setOff(false);
-            establishmentRepository.save(establishment);
-            return ResponseEntity.ok(establishment);
+        Establishment establishment;
+        try {
+            establishment = establishmentRepository.findById(establishmentId).get();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estabelicimento Inexistente");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao ligar Estabelicimento");
+
+        if (establishment.isOff()){
+            if (establishment.getPlaylist().getVotesQuantity() > 0){
+                establishment.setOff(false);
+                establishmentRepository.save(establishment);
+                return ResponseEntity.status(HttpStatus.OK).body(establishment.getEstablishmentId());
+            }
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Selecione Gêneros");
+
+        }
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Erro ao ligar Estabelicimento");
     }
     public ResponseEntity<?> turnOff(Long establishmentId){
-        Establishment establishment = establishmentRepository.findById(establishmentId).get();
+        Establishment establishment;
+        try {
+            establishment = establishmentRepository.findById(establishmentId).get();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estabelicimento Inexistente");
+        }
         if (!establishment.isOff()){
             establishment.setOff(true);
             establishmentRepository.save(establishment);
-            return ResponseEntity.ok(establishment);
+            return ResponseEntity.status(HttpStatus.OK).body(establishment.getEstablishmentId());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao desligar Estabelicimento");
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Erro ao desligar Estabelicimento");
     }
 }
