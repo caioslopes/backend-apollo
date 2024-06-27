@@ -3,7 +3,9 @@ package br.com.apollomusic.app.model.entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -22,10 +24,23 @@ public class Playlist {
     @CollectionTable(name = "tb_playlist_songs", joinColumns = @JoinColumn(name = "playlist_id"))
     private Set<Song> songs = new HashSet<>();
 
-    public Playlist(long playlistId, Establishment establishment, Set<Song> songs) {
+    @ElementCollection
+    @CollectionTable(name = "tb_blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
+    @Column(name = "genre")
+    private Set<String> blockedGenres = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "tb_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
+    @MapKeyColumn(name = "genre")
+    @Column(name = "votes")
+    private Map<String, Integer> genres = new HashMap<>();
+
+    public Playlist(long playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres) {
         this.playlistId = playlistId;
         this.establishment = establishment;
         this.songs = songs;
+        this.blockedGenres = blockedGenres;
+        this.genres = genres;
     }
 
     public Playlist() {}
@@ -52,5 +67,21 @@ public class Playlist {
 
     public void setSongs(Set<Song> songs) {
         this.songs = songs;
+    }
+
+    public Set<String> getBlockedGenres() {
+        return blockedGenres;
+    }
+
+    public void setBlockedGenres(Set<String> blockedGenres) {
+        this.blockedGenres = blockedGenres;
+    }
+
+    public Map<String, Integer> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Map<String, Integer> genres) {
+        this.genres = genres;
     }
 }
