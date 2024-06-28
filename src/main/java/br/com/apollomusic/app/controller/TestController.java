@@ -1,15 +1,15 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.Spotify.Services.PlaylistSpotifyService;
+import br.com.apollomusic.app.model.dto.AddSongsToPlaylistReqDto;
 import br.com.apollomusic.app.model.services.ApiService;
+import br.com.apollomusic.app.model.services.PlaylistService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
@@ -19,6 +19,9 @@ public class TestController {
 
     @Autowired
     ApiService apiService;
+
+    @Autowired
+    PlaylistService playlistService;
 
     @GetMapping
     public String hello() {
@@ -50,6 +53,13 @@ public class TestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/playlist/{playlistId}/songs")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> addSongsToPlaylist(@PathVariable String playlistId, @RequestBody AddSongsToPlaylistReqDto addSongsToPlaylistReqDto){
+        return playlistService.addSongToPlaylist(playlistId, addSongsToPlaylistReqDto.uris(), addSongsToPlaylistReqDto.position(), addSongsToPlaylistReqDto.spotifyAccessToken());
+    }
+
 }
 
 class RequestPlayer {
