@@ -82,4 +82,15 @@ public class Playlist {
     public void setGenres(Map<String, Integer> genres) {
         this.genres = genres;
     }
+
+    public Integer getVotesQuantity(){
+        Integer votesQuantity = 0;
+       for(Map.Entry<String, Integer> entry: genres.entrySet()){
+           if(entry.getValue() != 0){
+               votesQuantity++;
+           }
+       }
+       return votesQuantity;
+    }
+
 }

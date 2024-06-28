@@ -20,4 +20,16 @@ public class EstablishmentController {
         return establishmentService.createPlaylistOnSpotify(establishmentId, newPlaylistDto);
     }
 
+    @PostMapping("/turnOn")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> turnOn(@PathVariable Long establishmentId) {
+        return establishmentService.turnOn(establishmentId);
+    }
+
+    @PostMapping("/turnOff")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> turnOff(@PathVariable Long establishmentId) {
+        return establishmentService.turnOff(establishmentId);
+    }
+
 }
