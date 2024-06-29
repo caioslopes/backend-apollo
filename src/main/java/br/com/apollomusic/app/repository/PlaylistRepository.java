@@ -19,12 +19,9 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     @Modifying
     default void addSongsToPlaylist(String playlistId, Set<Song> songs){
         Playlist playlist = findById(playlistId).orElseThrow();
-//        playlist.setSongs(songs);
-
         for(Song song : songs ){
             playlist.addSong(song);
         }
-
         save(playlist);
     }
 

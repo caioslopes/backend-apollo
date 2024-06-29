@@ -1,6 +1,7 @@
 package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.Spotify.Dto.Playlist.AddItemToPlaylistReqDto;
+import br.com.apollomusic.app.Spotify.Dto.Playlist.AddItemToPlaylistResDto;
 import br.com.apollomusic.app.Spotify.Services.PlaylistSpotifyService;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.entities.Playlist;
@@ -29,8 +30,6 @@ public class PlaylistService {
 
     public ResponseEntity<?> addSongsToPlaylist(String playlistId, Set<Song> songs, String spotifyAccessToken){
         try {
-
-            //Verifica se a playlist existe
             Optional<Playlist> playlist = playlistRepository.findById(playlistId);
 
             if(playlist.isEmpty()){
@@ -38,10 +37,6 @@ public class PlaylistService {
                         .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
             }
 
-            //Adicionar ao banco de dados
-//            Set<Song> mscs = new HashSet<>();
-//            mscs.add(new Song("musiquinha", "funk"));
-//            mscs.add(new Song("teste 2", "pop"));
             playlistRepository.addSongsToPlaylist(playlistId, songs);
 
             Set<String> uris = new HashSet<>();
@@ -49,11 +44,10 @@ public class PlaylistService {
                 uris.add(song.getUri());
             }
 
-            //Adicionar a playlist do spotify
             AddItemToPlaylistReqDto addItemToPlaylistReqDto = new AddItemToPlaylistReqDto(uris, 0);
-            playlistSpotifyService.addItemsToPlaylist(playlistId, addItemToPlaylistReqDto, spotifyAccessToken);
+            AddItemToPlaylistResDto addItemToPlaylistResDto = playlistSpotifyService.addItemsToPlaylist(playlistId, addItemToPlaylistReqDto, spotifyAccessToken);
 
-            return ResponseEntity.ok().body("Músicas adicionadas com sucesso!");
+            return ResponseEntity.ok().body(addItemToPlaylistResDto);
 
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
