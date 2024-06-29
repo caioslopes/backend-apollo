@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name = "tb_playlist")
 public class Playlist {
 
-    public static int SONGLIMIT = 50;
+    public static final int SONGLIMIT = 50;
 
     @Id
     @Column(name = "playlist_id")
