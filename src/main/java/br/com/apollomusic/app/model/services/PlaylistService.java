@@ -4,12 +4,14 @@ import br.com.apollomusic.app.Spotify.Dto.Playlist.AddItemToPlaylistReqDto;
 import br.com.apollomusic.app.Spotify.Services.PlaylistSpotifyService;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.entities.Playlist;
+import br.com.apollomusic.app.model.entities.Song;
 import br.com.apollomusic.app.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class PlaylistService {
         this.playlistSpotifyService = playlistSpotifyService;
     }
 
-    public ResponseEntity<?> addSongToPlaylist(String playlistId, Set<String> songs, int position, String spotifyAccessToken){
+    public ResponseEntity<?> addSongsToPlaylist(String playlistId, Set<Song> songs, String spotifyAccessToken){
         try {
 
             //Verifica se a playlist existe
@@ -37,11 +39,19 @@ public class PlaylistService {
             }
 
             //Adicionar ao banco de dados
-            //TO-DO
+//            Set<Song> mscs = new HashSet<>();
+//            mscs.add(new Song("musiquinha", "funk"));
+//            mscs.add(new Song("teste 2", "pop"));
+            playlistRepository.addSongsToPlaylist(playlistId, songs);
+
+            Set<String> uris = new HashSet<>();
+            for (Song song : songs) {
+                uris.add(song.getUri());
+            }
 
             //Adicionar a playlist do spotify
-            AddItemToPlaylistReqDto addItemToPlaylistReqDto = new AddItemToPlaylistReqDto(songs, position);
-            playlistSpotifyService.addItemToPlaylist(playlistId, addItemToPlaylistReqDto, spotifyAccessToken);
+            AddItemToPlaylistReqDto addItemToPlaylistReqDto = new AddItemToPlaylistReqDto(uris, 0);
+            playlistSpotifyService.addItemsToPlaylist(playlistId, addItemToPlaylistReqDto, spotifyAccessToken);
 
             return ResponseEntity.ok().body("Músicas adicionadas com sucesso!");
 

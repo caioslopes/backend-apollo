@@ -93,4 +93,8 @@ public class Playlist {
        return votesQuantity;
     }
 
+    public void addSong(Song song){
+        this.songs.add(song);
+    }
+
 }
