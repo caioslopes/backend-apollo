@@ -11,11 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
 
-//    @Transactional
-//    @Modifying
-//    @Query("update Establishment e set e.playlist = ?1 where e.establishmentId = ?2")
-//    void setPlaylistEstablishment(Playlist playlist, long establishmentId);
-
     @Modifying
     default void setPlaylistEstablishment(long establishmentId, Playlist playlist){
         Establishment establishment = findById(establishmentId).orElseThrow();
