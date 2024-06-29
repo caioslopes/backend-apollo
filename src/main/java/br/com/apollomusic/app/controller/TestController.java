@@ -1,6 +1,7 @@
 package br.com.apollomusic.app.controller;
 
 import br.com.apollomusic.app.model.dto.AddSongsToPlaylistReqDto;
+import br.com.apollomusic.app.model.dto.RemoveSongsFromPlaylistReqDto;
 import br.com.apollomusic.app.model.services.ApiService;
 import br.com.apollomusic.app.model.services.PlaylistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class TestController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> addSongsToPlaylist(@PathVariable String playlistId, @RequestBody AddSongsToPlaylistReqDto addSongsToPlaylistReqDto){
         return playlistService.addSongsToPlaylist(playlistId, addSongsToPlaylistReqDto.songs(), addSongsToPlaylistReqDto.spotifyAccessToken());
+    }
+
+    @DeleteMapping("/playlist/{playlistId}/songs")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> removeSongsFromPlaylist(@PathVariable String playlistId, @RequestBody RemoveSongsFromPlaylistReqDto removeSongsFromPlaylistReqDto){
+        return playlistService.removeSongsFromPlaylist(playlistId, removeSongsFromPlaylistReqDto.songs(), removeSongsFromPlaylistReqDto.snapshot_id(), removeSongsFromPlaylistReqDto.spotifyAccessToken());
     }
 
 }

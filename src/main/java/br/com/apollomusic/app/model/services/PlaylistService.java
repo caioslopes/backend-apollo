@@ -1,7 +1,6 @@
 package br.com.apollomusic.app.model.services;
 
-import br.com.apollomusic.app.Spotify.Dto.Playlist.AddItemToPlaylistReqDto;
-import br.com.apollomusic.app.Spotify.Dto.Playlist.AddItemToPlaylistResDto;
+import br.com.apollomusic.app.Spotify.Dto.Playlist.*;
 import br.com.apollomusic.app.Spotify.Services.PlaylistSpotifyService;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.entities.Playlist;
@@ -23,7 +22,7 @@ public class PlaylistService {
     private final PlaylistSpotifyService playlistSpotifyService;
 
     @Autowired
-    public PlaylistService (PlaylistRepository playlistRepository ,PlaylistSpotifyService playlistSpotifyService){
+    public PlaylistService (PlaylistRepository playlistRepository , PlaylistSpotifyService playlistSpotifyService){
         this.playlistRepository = playlistRepository;
         this.playlistSpotifyService = playlistSpotifyService;
     }
@@ -47,7 +46,38 @@ public class PlaylistService {
             AddItemToPlaylistReqDto addItemToPlaylistReqDto = new AddItemToPlaylistReqDto(uris, 0);
             AddItemToPlaylistResDto addItemToPlaylistResDto = playlistSpotifyService.addItemsToPlaylist(playlistId, addItemToPlaylistReqDto, spotifyAccessToken);
 
+            playlistRepository.setLastSnapshotId(playlistId, addItemToPlaylistResDto.snapshot_id());
+
             return ResponseEntity.ok().body(addItemToPlaylistResDto);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> removeSongsFromPlaylist(String playlistId, Set<Song> songs, String snapshotId, String spotifyAccessToken){
+        try {
+            Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+            if(playlist.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
+            }
+
+            playlistRepository.removeSongsFromPlaylist(playlistId, songs);
+
+            Set<ObjectUri> tracks = new HashSet<>();
+            for (Song song : songs) {
+                tracks.add(new ObjectUri(song.getUri()));
+            }
+
+            RemoveItemFromPlaylistReqDto removeItemFromPlaylistReqDto = new RemoveItemFromPlaylistReqDto(tracks, snapshotId);
+            RemoveItemFromPlaylistResDto removeItemFromPlaylistResDto = playlistSpotifyService.removeItemsFromPlaylist(playlistId, removeItemFromPlaylistReqDto, spotifyAccessToken);
+
+            playlistRepository.setLastSnapshotId(playlistId, removeItemFromPlaylistResDto.snapshot_id());
+
+            return ResponseEntity.ok().body(removeItemFromPlaylistResDto);
 
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

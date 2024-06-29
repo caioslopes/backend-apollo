@@ -25,4 +25,20 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
         save(playlist);
     }
 
+    @Modifying
+    default void removeSongsFromPlaylist(String playlistId, Set<Song> songs){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        for(Song song : songs ){
+            playlist.removeSong(song);
+        }
+        save(playlist);
+    }
+
+    @Modifying
+    default void setLastSnapshotId(String playlistId, String lastSnapshotId){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        playlist.setLastSnapshot_id(lastSnapshotId);
+        save(playlist);
+    }
+
 }

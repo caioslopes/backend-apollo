@@ -68,6 +68,21 @@ public class ApiService {
         } catch (Exception e) {
             return "Error in postWithResponse";
         }
-
     }
+
+    public <T> String delete(String endpoint, T requestBody, String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<T> request = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.exchange((baseUrl + endpoint), HttpMethod.DELETE, request, String.class);
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            return "Error in delete";
+        }
+    }
+
 }
