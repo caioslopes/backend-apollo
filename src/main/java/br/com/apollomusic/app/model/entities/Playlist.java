@@ -15,6 +15,8 @@ public class Playlist {
     @Column(name = "playlist_id")
     private String playlistId;
 
+    private String lastSnapshot_id;
+
     @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Establishment establishment;
 
@@ -33,12 +35,13 @@ public class Playlist {
     @Column(name = "votes")
     private Map<String, Integer> genres = new HashMap<>();
 
-    public Playlist(String playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres) {
+    public Playlist(String playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres, String lastSnapshot_id) {
         this.playlistId = playlistId;
         this.establishment = establishment;
         this.songs = songs;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
+        this.lastSnapshot_id = lastSnapshot_id;
     }
 
     public Playlist() {}
@@ -83,6 +86,14 @@ public class Playlist {
         this.genres = genres;
     }
 
+    public String getLastSnapshot_id() {
+        return lastSnapshot_id;
+    }
+
+    public void setLastSnapshot_id(String lastSnapshot_id) {
+        this.lastSnapshot_id = lastSnapshot_id;
+    }
+
     public Integer getVotesQuantity(){
         Integer votesQuantity = 0;
        for(Map.Entry<String, Integer> entry: genres.entrySet()){
@@ -91,6 +102,14 @@ public class Playlist {
            }
        }
        return votesQuantity;
+    }
+
+    public void addSong(Song song){
+        this.songs.add(song);
+    }
+
+    public void removeSong(Song song){
+        songs.removeIf(s -> s.getUri().equals(song.getUri()));
     }
 
 }

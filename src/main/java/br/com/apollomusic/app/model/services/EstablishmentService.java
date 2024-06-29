@@ -44,9 +44,9 @@ public class EstablishmentService {
             UserSpotifyDto userSpotifyDto = userSpotifyService.getUserOnSpotify(newPlaylistDto.spotifyAccessToken());
             NewPlaylistSpotifyResDto newPlaylistSpotifyResDto = playlistSpotifyService.createPlaylist(userSpotifyDto.id(), newPlaylistSpotifyDto, newPlaylistDto.spotifyAccessToken());
 
-            Playlist playlist = new Playlist(newPlaylistSpotifyResDto.id(), establishment, new HashSet<>(), new HashSet<>(), new HashMap<>());
+            Playlist playlist = new Playlist(newPlaylistSpotifyResDto.id(), establishment, new HashSet<>(), new HashSet<>(), new HashMap<>(), newPlaylistSpotifyResDto.snapshot_id());
             playlistRepository.save(playlist);
-            establishmentRepository.setPlaylistEstablishment(playlist, id);
+            establishmentRepository.setPlaylistEstablishment(id, playlist);
 
             return ResponseEntity.ok().body("Playlist criada com sucesso: " + newPlaylistSpotifyResDto.id());
         }catch (Exception e){
