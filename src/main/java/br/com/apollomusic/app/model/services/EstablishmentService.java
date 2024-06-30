@@ -25,12 +25,14 @@ public class EstablishmentService {
     private final PlaylistRepository playlistRepository;
     private final UserSpotifyService userSpotifyService;
     private final PlaylistSpotifyService playlistSpotifyService;
+    private final PlaylistService playlistService;
 
-    public EstablishmentService(EstablishmentRepository establishmentRepository, PlaylistRepository playlistRepository, UserSpotifyService userSpotifyService, PlaylistSpotifyService playlistSpotifyService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, PlaylistRepository playlistRepository, UserSpotifyService userSpotifyService, PlaylistSpotifyService playlistSpotifyService, PlaylistService playlistService) {
         this.establishmentRepository = establishmentRepository;
         this.playlistRepository = playlistRepository;
         this.userSpotifyService = userSpotifyService;
         this.playlistSpotifyService = playlistSpotifyService;
+        this.playlistService = playlistService;
     }
 
     public ResponseEntity<?> createPlaylistOnSpotify(long id, NewPlaylistDto newPlaylistDto){
@@ -90,6 +92,54 @@ public class EstablishmentService {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Erro ao desligar Estabelicimento");
+    }
+
+    public ResponseEntity<?> blockGenres(long establishmentId, Set<String> genres){
+        try{
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            return playlistService.blockGenres(establishment.get().getPlaylist().getPlaylistId(), genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> incrementVoteGenres(long establishmentId, Set<String> genres){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            return playlistService.incrementVoteGenres(establishment.get().getPlaylist().getPlaylistId(), genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> decrementVoteGenres(long establishmentId, Set<String> genres){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            return playlistService.decrementVoteGenres(establishment.get().getPlaylist().getPlaylistId(), genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
     }
 
 }

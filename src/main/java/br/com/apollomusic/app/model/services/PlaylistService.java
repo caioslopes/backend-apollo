@@ -85,4 +85,61 @@ public class PlaylistService {
         }
     }
 
+    public ResponseEntity<?> blockGenres(String playlistId, Set<String> genres){
+        try {
+            Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+            if(playlist.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
+            }
+
+            playlistRepository.blockGenres(playlistId, genres);
+
+            return ResponseEntity.ok().body(genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> incrementVoteGenres(String playlistId, Set<String> genres){
+        try {
+            Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+            if(playlist.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
+            }
+
+            playlistRepository.incrementVoteGenres(playlistId, genres);
+
+            return ResponseEntity.ok().body(genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> decrementVoteGenres(String playlistId, Set<String> genres){
+        try {
+            Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+            if(playlist.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
+            }
+
+            playlistRepository.decrementVoteGenres(playlistId, genres);
+
+            return ResponseEntity.ok().body(genres);
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
 }

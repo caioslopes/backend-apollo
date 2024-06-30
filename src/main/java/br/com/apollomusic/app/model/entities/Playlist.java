@@ -15,7 +15,7 @@ public class Playlist {
     @Column(name = "playlist_id")
     private String playlistId;
 
-    private String lastSnapshot_id;
+    private String lastSnapshotId;
 
     @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Establishment establishment;
@@ -35,13 +35,13 @@ public class Playlist {
     @Column(name = "votes")
     private Map<String, Integer> genres = new HashMap<>();
 
-    public Playlist(String playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres, String lastSnapshot_id) {
+    public Playlist(String playlistId, Establishment establishment, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres, String lastSnapshotId) {
         this.playlistId = playlistId;
         this.establishment = establishment;
         this.songs = songs;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
-        this.lastSnapshot_id = lastSnapshot_id;
+        this.lastSnapshotId = lastSnapshotId;
     }
 
     public Playlist() {}
@@ -86,17 +86,17 @@ public class Playlist {
         this.genres = genres;
     }
 
-    public String getLastSnapshot_id() {
-        return lastSnapshot_id;
+    public String getLastSnapshotId() {
+        return lastSnapshotId;
     }
 
-    public void setLastSnapshot_id(String lastSnapshot_id) {
-        this.lastSnapshot_id = lastSnapshot_id;
+    public void setLastSnapshotId(String lastSnapshotId) {
+        this.lastSnapshotId = lastSnapshotId;
     }
 
     public Integer getVotesQuantity(){
         Integer votesQuantity = 0;
-       for(Map.Entry<String, Integer> entry: genres.entrySet()){
+        for(Map.Entry<String, Integer> entry: genres.entrySet()){
            if(entry.getValue() != 0){
                votesQuantity++;
            }
@@ -110,6 +110,31 @@ public class Playlist {
 
     public void removeSong(Song song){
         songs.removeIf(s -> s.getUri().equals(song.getUri()));
+    }
+
+    public void incrementVoteGenre(Set<String> genres){
+        for(String genre: genres){
+            if(!this.blockedGenres.contains(genre)){
+                if(this.genres.containsKey(genre)){
+                    this.genres.put(genre, this.genres.get(genre) + 1);
+                }else{
+                    this.genres.put(genre, 1);
+                }
+            }
+        }
+    }
+
+    public void decrementVoteGenre(Set<String> genres){
+        for(String genre: genres){
+            if(this.genres.containsKey(genre)){
+                if(this.genres.get(genre) > 0){
+                    this.genres.put(genre, this.genres.get(genre) - 1);
+                }else{
+                    this.genres.remove(genre);
+                }
+
+            }
+        }
     }
 
 }
