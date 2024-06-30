@@ -37,7 +37,28 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     @Modifying
     default void setLastSnapshotId(String playlistId, String lastSnapshotId){
         Playlist playlist = findById(playlistId).orElseThrow();
-        playlist.setLastSnapshot_id(lastSnapshotId);
+        playlist.setLastSnapshotId(lastSnapshotId);
+        save(playlist);
+    }
+
+    @Modifying
+    default void blockGenres(String playlistId, Set<String> genres){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        playlist.setBlockedGenres(genres);
+        save(playlist);
+    }
+
+    @Modifying
+    default void incrementVoteGenres(String playlistId, Set<String> genres){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        playlist.incrementVoteGenre(genres);
+        save(playlist);
+    }
+
+    @Modifying
+    default void decrementVoteGenres(String playlistId, Set<String> genres){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        playlist.decrementVoteGenre(genres);
         save(playlist);
     }
 
