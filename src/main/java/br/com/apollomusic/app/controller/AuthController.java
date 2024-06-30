@@ -3,6 +3,7 @@ package br.com.apollomusic.app.controller;
 import br.com.apollomusic.app.model.dto.OwnerApiAuthReqDto;
 import br.com.apollomusic.app.model.dto.OwnerReqDto;
 import br.com.apollomusic.app.model.dto.UserReqDto;
+import br.com.apollomusic.app.model.dto.LogoutUserDto;
 import br.com.apollomusic.app.model.services.ApiAuthService;
 import br.com.apollomusic.app.model.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ public class AuthController {
     @PostMapping("/user")
     public ResponseEntity<?> loginUser(@RequestBody UserReqDto user) {
         return authService.loginUser(user);
+    }
+
+    @DeleteMapping("/user/logout")
+    public ResponseEntity<?> logOutUser(@RequestBody LogoutUserDto logoutUserDto){
+        return authService.logOutUser(logoutUserDto);
     }
 
     @PostMapping("/owner")

@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.Spotify.Dto.Playlist;
+package br.com.apollomusic.app.Spotify.dto.Playlist;
 
 import java.util.Set;
 

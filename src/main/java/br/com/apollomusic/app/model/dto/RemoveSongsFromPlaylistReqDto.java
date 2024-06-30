@@ -1,6 +1,5 @@
 package br.com.apollomusic.app.model.dto;
 
-import br.com.apollomusic.app.Spotify.Dto.Playlist.ObjectUri;
 import br.com.apollomusic.app.model.entities.Song;
 
 import java.util.Set;

@@ -86,6 +86,12 @@ public class Playlist {
         this.genres = genres;
     }
 
+    public void removeGenre(Set<String> genres){
+        for (String genre : genres){
+            this.genres.remove(genre);
+        }
+    }
+
     public String getLastSnapshotId() {
         return lastSnapshotId;
     }

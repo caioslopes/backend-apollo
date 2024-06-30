@@ -49,6 +49,13 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     }
 
     @Modifying
+    default void removeGenre(String playlistId, Set<String> genres){
+        Playlist playlist = findById(playlistId).orElseThrow();
+        playlist.removeGenre(genres);
+        save(playlist);
+    }
+
+    @Modifying
     default void incrementVoteGenres(String playlistId, Set<String> genres){
         Playlist playlist = findById(playlistId).orElseThrow();
         playlist.incrementVoteGenre(genres);

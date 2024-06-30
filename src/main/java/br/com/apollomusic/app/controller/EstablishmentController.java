@@ -30,7 +30,7 @@ public class EstablishmentController {
     @PostMapping("/playlist")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> createPlaylist(@PathVariable long establishmentId, @RequestBody NewPlaylistDto newPlaylistDto){
-        return establishmentService.createPlaylistOnSpotify(establishmentId, newPlaylistDto);
+        return establishmentService.createPlaylist(establishmentId, newPlaylistDto);
     }
 
     @PostMapping("/playlist/genres/block")
@@ -40,13 +40,13 @@ public class EstablishmentController {
     }
 
     @PostMapping("/playlist/genres/increment")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')") we need add both of roles here
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_USER')")
     public ResponseEntity<?> incrementVoteGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
         return establishmentService.incrementVoteGenres(establishmentId, genreDto.genres());
     }
 
     @PostMapping("/playlist/genres/decrement")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')") we need add both of roles here
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN','SCOPE_ROLE_USER')")
     public ResponseEntity<?> decrementVoteGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
         return establishmentService.decrementVoteGenres(establishmentId, genreDto.genres());
     }

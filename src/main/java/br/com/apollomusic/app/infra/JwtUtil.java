@@ -23,9 +23,8 @@ public class JwtUtil {
     private static final long accessTokenValidity = 60;
 
     public String createTokenUser(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUserName());
+        Claims claims = Jwts.claims().setSubject(user.getUserId().toString());
         claims.put("establishmentId", user.getEstablishment().getEstablishmentId());
-        claims.put("genres", user.getGenres());
         claims.put("scope", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 2));

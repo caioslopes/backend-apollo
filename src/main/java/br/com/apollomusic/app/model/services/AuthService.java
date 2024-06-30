@@ -25,6 +25,7 @@ import java.util.Set;
 @Service
 public class AuthService {
 
+    private final PlaylistService playlistService;
     private final UserRepository userRepository;
     private final EstablishmentRepository establishmentRepository;
     private final RoleRepository roleRepository;
@@ -33,7 +34,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthService(UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(PlaylistService playlistService, UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+        this.playlistService = playlistService;
         this.userRepository = userRepository;
         this.establishmentRepository = establishmentRepository;
         this.jwtUtil = jwtUtil;
@@ -52,9 +54,38 @@ public class AuthService {
             User user = new User(establishment, userReqDto.username(), new HashSet<>(userReqDto.genres()), Set.of(userRole));
             userRepository.save(user);
 
-            String token = jwtUtil.createTokenUser(user);
-            return ResponseEntity.ok().body(new UserResDto(user.getUserName(), token));
+            playlistService.incrementVoteGenres(establishment.getPlaylist().getPlaylistId(), userReqDto.genres());
+
+            String accessToken = jwtUtil.createTokenUser(user);
+            return ResponseEntity.ok().body(new UserResDto(user.getUsername(), accessToken));
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> logOutUser(LogoutUserDto logoutUserDto){
+        try {
+//            Optional<Establishment> establishment = establishmentRepository.findById(logoutUserDto.establishmentId());
+//
+//            if (establishment.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+//            }
+
+            Optional<User> user = userRepository.findById(logoutUserDto.userId());
+
+            if(user.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado"));
+            }
+
+//            playlistService.decrementVoteGenres(establishment.get().getPlaylist().getPlaylistId(), user.get().getGenres());
+
+            userRepository.delete(user.get());
+
+            return ResponseEntity.ok().body(user.get().getUserId());
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
         }
@@ -88,8 +119,8 @@ public class AuthService {
                         .body(new BadCredentialsException("Senha inválida"));
             }
 
-            String token = jwtUtil.createTokenOwner(owner);
-            return ResponseEntity.ok().body(new OwnerResDto(owner.getEmail(), token));
+            String accessToken = jwtUtil.createTokenOwner(owner);
+            return ResponseEntity.ok().body(new OwnerResDto(owner.getEmail(), accessToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));

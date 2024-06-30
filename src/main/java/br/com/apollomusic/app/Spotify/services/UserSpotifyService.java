@@ -1,12 +1,11 @@
-package br.com.apollomusic.app.Spotify.Services;
+package br.com.apollomusic.app.Spotify.services;
 
-import br.com.apollomusic.app.Spotify.Dto.Me.UserSpotifyDto;
+import br.com.apollomusic.app.Spotify.dto.Me.UserSpotifyDto;
 import br.com.apollomusic.app.model.services.ApiService;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UserSpotifyService {
@@ -20,8 +19,7 @@ public class UserSpotifyService {
     }
 
     public UserSpotifyDto getUserOnSpotify(String spotifyAccessToken){
-        Map<String, String> queryParams = new HashMap<>();
-        String me = apiService.get("me", queryParams, spotifyAccessToken);
+        String me = apiService.get("me", new HashMap<>(), spotifyAccessToken);
         return gson.fromJson(me, UserSpotifyDto.class);
     }
 }
