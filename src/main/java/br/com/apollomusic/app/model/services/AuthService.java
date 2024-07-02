@@ -31,15 +31,17 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PlaylistService playlistService;
 
     @Autowired
-    public AuthService(UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder, PlaylistService playlistService) {
         this.userRepository = userRepository;
         this.establishmentRepository = establishmentRepository;
         this.jwtUtil = jwtUtil;
         this.roleRepository = roleRepository;
         this.ownerRepository = ownerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.playlistService = playlistService;
     }
 
     public ResponseEntity<?> loginUser(UserReqDto userReqDto) {
@@ -51,6 +53,8 @@ public class AuthService {
 
             User user = new User(establishment, userReqDto.username(), new HashSet<>(userReqDto.genres()), Set.of(userRole));
             userRepository.save(user);
+
+            playlistService.incrementVoteGenres(establishment.getPlaylist().getPlaylistId(), userReqDto.genres());
 
             String token = jwtUtil.createTokenUser(user);
             return ResponseEntity.ok().body(new UserResDto(user.getUserName(), token));
