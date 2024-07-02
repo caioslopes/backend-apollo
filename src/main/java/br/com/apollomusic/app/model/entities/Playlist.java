@@ -112,14 +112,20 @@ public class Playlist {
         songs.removeIf(s -> s.getUri().equals(song.getUri()));
     }
 
+    public void addBlockGenres(Set<String> blockedGenres){
+        this.blockedGenres.addAll(blockedGenres);
+        removeGenres(blockedGenres);
+    }
+
+    public void removeBlockGenres(Set<String> blockedGenres){
+        this.blockedGenres.removeAll(blockedGenres);
+        addGenres(blockedGenres);
+    }
+
     public void incrementVoteGenre(Set<String> genres){
         for(String genre: genres){
-            if(!this.blockedGenres.contains(genre)){
-                if(this.genres.containsKey(genre)){
-                    this.genres.put(genre, this.genres.get(genre) + 1);
-                }else{
-                    this.genres.put(genre, 1);
-                }
+            if(this.genres.containsKey(genre)){
+                this.genres.put(genre, this.genres.get(genre) + 1);
             }
         }
     }
@@ -129,12 +135,22 @@ public class Playlist {
             if(this.genres.containsKey(genre)){
                 if(this.genres.get(genre) > 0){
                     this.genres.put(genre, this.genres.get(genre) - 1);
-                }else{
-                    this.genres.remove(genre);
                 }
-
             }
         }
     }
+
+    private void removeGenres(Set<String> genres){
+        for(String genre : genres){
+            this.genres.remove(genre);
+        }
+    }
+
+    private void addGenres(Set<String> genres){
+        for(String genre : genres){
+            this.genres.put(genre, 1);
+        }
+    }
+
 
 }

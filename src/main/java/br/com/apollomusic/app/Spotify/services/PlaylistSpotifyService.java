@@ -1,6 +1,6 @@
-package br.com.apollomusic.app.Spotify.Services;
+package br.com.apollomusic.app.Spotify.services;
 
-import br.com.apollomusic.app.Spotify.Dto.Playlist.*;
+import br.com.apollomusic.app.Spotify.dto.Playlist.*;
 import br.com.apollomusic.app.model.services.ApiService;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
