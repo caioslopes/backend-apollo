@@ -2,6 +2,7 @@ package br.com.apollomusic.app.repository;
 
 import br.com.apollomusic.app.model.entities.Playlist;
 import br.com.apollomusic.app.model.entities.Song;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -51,6 +52,7 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     }
 
     @Modifying
+    @Transactional
     default void incrementVoteGenres(String playlistId, Set<String> genres){
         Playlist playlist = findById(playlistId).orElseThrow();
         playlist.incrementVoteGenre(genres);
@@ -58,6 +60,7 @@ public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     }
 
     @Modifying
+    @Transactional
     default void decrementVoteGenres(String playlistId, Set<String> genres){
         Playlist playlist = findById(playlistId).orElseThrow();
         playlist.decrementVoteGenre(genres);

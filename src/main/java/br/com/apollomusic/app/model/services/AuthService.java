@@ -2,14 +2,8 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.infra.JwtUtil;
 import br.com.apollomusic.app.model.dto.*;
-import br.com.apollomusic.app.repository.OwnerRepository;
-import br.com.apollomusic.app.repository.RoleRepository;
-import br.com.apollomusic.app.repository.UserRepository;
-import br.com.apollomusic.app.repository.EstablishmentRepository;
-import br.com.apollomusic.app.model.entities.Owner;
-import br.com.apollomusic.app.model.entities.Role;
-import br.com.apollomusic.app.model.entities.User;
-import br.com.apollomusic.app.model.entities.Establishment;
+import br.com.apollomusic.app.model.entities.*;
+import br.com.apollomusic.app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +57,27 @@ public class AuthService {
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
         }
     }
+
+    public ResponseEntity<?> logoutUser(LogoutUserDto logoutUserDto){
+        try {
+            Optional<User> userOpt = userRepository.findById(logoutUserDto.userId());
+            User user = userOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+
+            Set<String> genres = new HashSet<>(user.getGenres());
+
+            userRepository.deleteById(user.getUserId());
+
+            Optional<Establishment> establishmentOpt = establishmentRepository.findById(logoutUserDto.establishmentId());
+            Establishment establishment = establishmentOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estabelecimento não encontrado"));
+
+            playlistService.decrementVoteGenres(establishment.getPlaylist().getPlaylistId(), genres);
+            return ResponseEntity.ok().body(user.getUserId());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
 
     public ResponseEntity<?> loginOwner(OwnerReqDto ownerReqDto) {
         try {
