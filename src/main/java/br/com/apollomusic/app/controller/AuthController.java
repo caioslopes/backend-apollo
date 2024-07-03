@@ -1,5 +1,6 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.model.dto.LogoutUserDto;
 import br.com.apollomusic.app.model.dto.OwnerApiAuthReqDto;
 import br.com.apollomusic.app.model.dto.OwnerReqDto;
 import br.com.apollomusic.app.model.dto.UserReqDto;
@@ -28,6 +29,11 @@ public class AuthController {
     @PostMapping("/owner")
     public ResponseEntity<?> loginOwner(@RequestBody OwnerReqDto ownerReqDto) {
         return authService.loginOwner(ownerReqDto);
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<?> logoutUser(@RequestBody LogoutUserDto logoutUserDto) {
+        return  authService.logoutUser(logoutUserDto);
     }
 
     @PostMapping("/api")

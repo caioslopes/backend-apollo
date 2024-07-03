@@ -1,17 +1,14 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.model.dto.AddSongsToPlaylistReqDto;
+import br.com.apollomusic.app.model.dto.RemoveSongsFromPlaylistReqDto;
 import br.com.apollomusic.app.model.services.ApiService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.com.apollomusic.app.model.services.PlaylistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collection;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/test")
@@ -19,6 +16,9 @@ public class TestController {
 
     @Autowired
     ApiService apiService;
+
+    @Autowired
+    PlaylistService playlistService;
 
     @GetMapping
     public String hello() {
@@ -50,6 +50,19 @@ public class TestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/playlist/{playlistId}/songs")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> addSongsToPlaylist(@PathVariable String playlistId, @RequestBody AddSongsToPlaylistReqDto addSongsToPlaylistReqDto){
+        return playlistService.addSongsToPlaylist(playlistId, addSongsToPlaylistReqDto.songs(), addSongsToPlaylistReqDto.spotifyAccessToken());
+    }
+
+    @DeleteMapping("/playlist/{playlistId}/songs")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> removeSongsFromPlaylist(@PathVariable String playlistId, @RequestBody RemoveSongsFromPlaylistReqDto removeSongsFromPlaylistReqDto){
+        return playlistService.removeSongsFromPlaylist(playlistId, removeSongsFromPlaylistReqDto.songs(), removeSongsFromPlaylistReqDto.snapshot_id(), removeSongsFromPlaylistReqDto.spotifyAccessToken());
+    }
+
 }
 
 class RequestPlayer {

@@ -4,22 +4,22 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Song {
-    private String songId;
+    private String uri;
     private String genre;
 
-    public Song(String songId, String genre) {
-        this.songId = songId;
+    public Song(String uri, String genre) {
+        this.uri = uri;
         this.genre = genre;
     }
 
     public Song() {}
 
-    public String getSongId() {
-        return songId;
+    public String getUri() {
+        return uri;
     }
 
-    public void setSongId(String songId) {
-        this.songId = songId;
+    public void setUri(String songId) {
+        this.uri = songId;
     }
 
     public String getGenre() {

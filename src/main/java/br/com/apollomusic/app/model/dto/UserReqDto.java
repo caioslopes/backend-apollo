@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.model.dto;
 
-import java.util.List;
+import java.util.Set;
 
-public record UserReqDto(String username, List<String> genres, Long establishmentId) {
+public record UserReqDto(String username, Set<String> genres, Long establishmentId) {
 }
