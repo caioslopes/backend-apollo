@@ -1,17 +1,9 @@
 package br.com.apollomusic.app.model.services;
 
-import br.com.apollomusic.app.Spotify.dto.Me.UserSpotifyDto;
-import br.com.apollomusic.app.Spotify.dto.Playlist.NewPlaylistSpotifyDto;
-import br.com.apollomusic.app.Spotify.dto.Playlist.NewPlaylistSpotifyResDto;
-import br.com.apollomusic.app.Spotify.services.PlaylistSpotifyService;
-import br.com.apollomusic.app.Spotify.services.UserSpotifyService;
-import br.com.apollomusic.app.Spotify.utils.GenerateDefaultInformation;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.entities.Establishment;
-import br.com.apollomusic.app.model.entities.Playlist;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
-import br.com.apollomusic.app.repository.PlaylistRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
