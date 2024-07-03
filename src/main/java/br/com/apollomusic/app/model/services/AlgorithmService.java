@@ -19,11 +19,11 @@ public class AlgorithmService {
     }
 
     public void runAlgorithm(){
-        var genreQuantity = genreVotesService.getSongsQuantityPerGenre();
+        var votesInEachGenre = genreVotesService.getSongsQuantityPerGenre();
         var songsInPlaylist = genreVotesService.getPlaylist().getSongs();
         int songsQuantity;
 
-        for(var item : genreQuantity.entrySet()){
+        for(var item : votesInEachGenre.entrySet()){
             songsQuantity = getQuantityOfSongInPlaylistByGenre(item.getKey(), songsInPlaylist);
 
             while (songsQuantity != item.getValue()){
@@ -43,8 +43,8 @@ public class AlgorithmService {
     private int getQuantityOfSongInPlaylistByGenre(String genre, Set<Song> songs){
         int quantity = 0;
 
-        for(var item : songs){
-            if(item.getGenre().equals(genre)){
+        for(Song s : songs){
+            if(s.getGenre().equals(genre)){
                 quantity++;
             }
         }
