@@ -30,23 +30,29 @@ public class EstablishmentController {
     @PostMapping("/playlist")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> createPlaylist(@PathVariable long establishmentId, @RequestBody NewPlaylistDto newPlaylistDto){
-        return establishmentService.createPlaylistOnSpotify(establishmentId, newPlaylistDto);
+        return establishmentService.createPlaylist(establishmentId, newPlaylistDto);
     }
 
     @PostMapping("/playlist/genres/block")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<?> blockGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
-        return establishmentService.blockGenres(establishmentId, genreDto.genres());
+    public ResponseEntity<?> addBlockGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
+        return establishmentService.addBlockGenres(establishmentId, genreDto.genres());
+    }
+
+    @DeleteMapping("/playlist/genres/block")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> removeBlockGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
+        return establishmentService.removeBlockGenres(establishmentId, genreDto.genres());
     }
 
     @PostMapping("/playlist/genres/increment")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')") we need add both of roles here
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN', 'SCOPE_ROLE_USER')")
     public ResponseEntity<?> incrementVoteGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
         return establishmentService.incrementVoteGenres(establishmentId, genreDto.genres());
     }
 
     @PostMapping("/playlist/genres/decrement")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')") we need add both of roles here
+    @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN', 'SCOPE_ROLE_USER')")
     public ResponseEntity<?> decrementVoteGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
         return establishmentService.decrementVoteGenres(establishmentId, genreDto.genres());
     }

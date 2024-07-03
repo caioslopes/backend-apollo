@@ -2,14 +2,8 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.infra.JwtUtil;
 import br.com.apollomusic.app.model.dto.*;
-import br.com.apollomusic.app.repository.OwnerRepository;
-import br.com.apollomusic.app.repository.RoleRepository;
-import br.com.apollomusic.app.repository.UserRepository;
-import br.com.apollomusic.app.repository.EstablishmentRepository;
-import br.com.apollomusic.app.model.entities.Owner;
-import br.com.apollomusic.app.model.entities.Role;
-import br.com.apollomusic.app.model.entities.User;
-import br.com.apollomusic.app.model.entities.Establishment;
+import br.com.apollomusic.app.model.entities.*;
+import br.com.apollomusic.app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +25,17 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PlaylistService playlistService;
 
     @Autowired
-    public AuthService(UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, RoleRepository roleRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder, PlaylistService playlistService) {
         this.userRepository = userRepository;
         this.establishmentRepository = establishmentRepository;
         this.jwtUtil = jwtUtil;
         this.roleRepository = roleRepository;
         this.ownerRepository = ownerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.playlistService = playlistService;
     }
 
     public ResponseEntity<?> loginUser(UserReqDto userReqDto) {
@@ -52,6 +48,8 @@ public class AuthService {
             User user = new User(establishment, userReqDto.username(), new HashSet<>(userReqDto.genres()), Set.of(userRole));
             userRepository.save(user);
 
+            playlistService.incrementVoteGenres(establishment.getPlaylist().getPlaylistId(), userReqDto.genres());
+
             String token = jwtUtil.createTokenUser(user);
             return ResponseEntity.ok().body(new UserResDto(user.getUserName(), token));
         } catch (Exception e) {
@@ -59,6 +57,27 @@ public class AuthService {
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
         }
     }
+
+    public ResponseEntity<?> logoutUser(LogoutUserDto logoutUserDto){
+        try {
+            Optional<User> userOpt = userRepository.findById(logoutUserDto.userId());
+            User user = userOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+
+            Set<String> genres = new HashSet<>(user.getGenres());
+
+            userRepository.deleteById(user.getUserId());
+
+            Optional<Establishment> establishmentOpt = establishmentRepository.findById(logoutUserDto.establishmentId());
+            Establishment establishment = establishmentOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estabelecimento não encontrado"));
+
+            playlistService.decrementVoteGenres(establishment.getPlaylist().getPlaylistId(), genres);
+            return ResponseEntity.ok().body(user.getUserId());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
 
     public ResponseEntity<?> loginOwner(OwnerReqDto ownerReqDto) {
         try {

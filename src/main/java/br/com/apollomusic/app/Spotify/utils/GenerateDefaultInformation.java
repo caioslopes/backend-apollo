@@ -1,7 +1,6 @@
 package br.com.apollomusic.app.Spotify.utils;
 
-import br.com.apollomusic.app.Spotify.Dto.Playlist.NewPlaylistSpotifyDto;
-import org.springframework.stereotype.Service;
+import br.com.apollomusic.app.Spotify.dto.Playlist.NewPlaylistSpotifyDto;
 
 public class GenerateDefaultInformation {
     public GenerateDefaultInformation() {}
