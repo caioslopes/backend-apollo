@@ -40,13 +40,13 @@ public class AlgorithmService {
                     .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada."));
         }
 
-        var votesInEachGenre = genreVotesService.getSongsQuantityPerGenre(playlist);
+        var songsQuantityPerGenre = genreVotesService.getSongsQuantityPerGenre(playlist);
         var songsInPlaylist = playlist.getSongs();
 
         int songsQuantity;
         Set<Song> songs;
 
-        for(var item : votesInEachGenre.entrySet()){
+        for(var item : songsQuantityPerGenre.entrySet()){
             songsQuantity = getQuantityOfSongInPlaylistByGenre(item.getKey(), songsInPlaylist);
 
             try {
