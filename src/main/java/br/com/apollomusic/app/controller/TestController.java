@@ -2,6 +2,7 @@ package br.com.apollomusic.app.controller;
 
 import br.com.apollomusic.app.model.dto.AddSongsToPlaylistReqDto;
 import br.com.apollomusic.app.model.dto.RemoveSongsFromPlaylistReqDto;
+import br.com.apollomusic.app.model.services.AlgorithmService;
 import br.com.apollomusic.app.model.services.ApiService;
 import br.com.apollomusic.app.model.services.PlaylistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class TestController {
 
     @Autowired
     PlaylistService playlistService;
+
+    @Autowired
+    AlgorithmService algorithmService;
 
     @GetMapping
     public String hello() {
@@ -49,6 +53,15 @@ public class TestController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/apiTest/algorithm/{accessToken}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> runAlgorithm(@PathVariable String accessToken) {
+
+        RequestPlayer request = new RequestPlayer("device_id");
+
+        algorithmService.runAlgorithm(accessToken);
     }
 
     @PostMapping("/playlist/{playlistId}/songs")

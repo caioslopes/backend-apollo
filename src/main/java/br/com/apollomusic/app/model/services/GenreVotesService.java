@@ -1,6 +1,7 @@
 package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.model.entities.Playlist;
+import br.com.apollomusic.app.repository.PlaylistRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -8,32 +9,29 @@ import java.util.Map;
 
 @Service
 public class GenreVotesService {
-    private Playlist playlist;
+    private PlaylistRepository playlistRepository;
 
-    public GenreVotesService(Playlist playlist) {
-        this.playlist = playlist;
+    public GenreVotesService(PlaylistRepository playlistRepository) {
+        this.playlistRepository = playlistRepository;
     }
 
-    public Playlist getPlaylist() {
-        return playlist;
-    }
-
-    public void setPlaylist(Playlist playlist) {
-        this.playlist = playlist;
-    }
-
-    public HashMap<String, Integer> getSongsQuantityPerGenre(){
+    public HashMap<String, Integer> getSongsQuantityPerGenre(String id){
         int totalVotes = 0;
         HashMap<String, Integer> genresPercent = new HashMap<>();
         HashMap<String, Integer> songQuantityPerGenre = new HashMap<>();
+        var playlist = playlistRepository.findById(id);
+
+        if(playlist == null){
+            return null;
+        }
 
         // foreach to get the total votes
-        for(Integer item : playlist.getGenres().values()){
+        for(Integer item : playlist.get().getGenres().values()){
             totalVotes += item;
         }
 
         // foreach to get the percentage of each genre in playlist
-        for(var item : playlist.getGenres().entrySet()){
+        for(var item : playlist.get().getGenres().entrySet()){
             int votesInGenre = item.getValue();
             genresPercent.put(item.getKey(), votesInGenre * 100 / totalVotes);
         }
