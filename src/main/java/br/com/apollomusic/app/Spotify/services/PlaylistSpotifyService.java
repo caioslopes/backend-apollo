@@ -34,4 +34,10 @@ public class PlaylistSpotifyService {
         return gson.fromJson(response, RemoveItemFromPlaylistResDto.class);
     }
 
+    public PlaylistSpotifyDto getPlaylist(String playlistId, String spotifyAccessToken){
+        String endpoint = "/playlists/" + playlistId;
+        String response = apiService.get(endpoint, null, spotifyAccessToken);
+        return gson.fromJson(response, PlaylistSpotifyDto.class);
+    }
+
 }
