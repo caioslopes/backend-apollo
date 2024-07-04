@@ -9,6 +9,7 @@ import br.com.apollomusic.app.Spotify.services.UserSpotifyService;
 import br.com.apollomusic.app.Spotify.utils.GenerateDefaultInformation;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
+import br.com.apollomusic.app.model.dto.Playlist.PlaylistDto;
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.model.entities.Playlist;
 import br.com.apollomusic.app.model.entities.Song;
@@ -196,6 +197,24 @@ public class PlaylistService {
 
             return ResponseEntity.ok().body(genres);
 
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> getPlaylist(String playlistId, String spotifyAccessToken){
+        try {
+            Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+            if(playlist.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada"));
+            }
+
+            PlaylistSpotifyDto playlistSpotifyDto = playlistSpotifyService.getPlaylist(playlistId, spotifyAccessToken);
+            PlaylistDto playlistDto = new PlaylistDto(playlistSpotifyDto.id(), playlistSpotifyDto.name(), playlistSpotifyDto.description(), playlist.get().getGenres(), playlist.get().getBlockedGenres());
+
+            return ResponseEntity.ok().body(playlistDto);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));

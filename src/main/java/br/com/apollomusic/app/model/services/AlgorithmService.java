@@ -34,6 +34,7 @@ public class AlgorithmService {
 
     public ResponseEntity<?> runAlgorithm(String playlistId, String accessToken){
         var playlist = genreVotesService.getPlaylist(playlistId);
+
         if(playlist == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada."));

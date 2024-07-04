@@ -1,5 +1,6 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.model.dto.Token.SpotifyAccessTokenDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.dto.GenreDto;
 import br.com.apollomusic.app.model.services.EstablishmentService;
@@ -15,6 +16,11 @@ public class EstablishmentController {
     @Autowired
     private EstablishmentService establishmentService;
 
+    @GetMapping
+    public ResponseEntity<?> getEstablishment(@PathVariable Long establishmentId) {
+        return establishmentService.getEstablishment(establishmentId);
+    }
+
     @PostMapping("/turnOn")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> turnOn(@PathVariable Long establishmentId) {
@@ -25,6 +31,11 @@ public class EstablishmentController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> turnOff(@PathVariable Long establishmentId) {
         return establishmentService.turnOff(establishmentId);
+    }
+
+    @GetMapping("/playlist")
+    public ResponseEntity<?> getPlaylist(@PathVariable Long establishmentId, @RequestBody SpotifyAccessTokenDto spotifyAccessTokenDto) {
+        return establishmentService.getPlaylist(establishmentId, spotifyAccessTokenDto.spotifyAccessToken());
     }
 
     @PostMapping("/playlist")

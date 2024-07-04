@@ -1,8 +1,10 @@
 package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.model.dto.ErrorResDto;
+import br.com.apollomusic.app.model.dto.Establishment.EstablishmentDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.entities.Establishment;
+import br.com.apollomusic.app.model.entities.User;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -131,6 +133,39 @@ public class EstablishmentService {
 
             return playlistService.decrementVoteGenres(establishment.get().getPlaylist().getPlaylistId(), genres);
 
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> getPlaylist(long establishmentId, String spotifyAccessToken){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            return playlistService.getPlaylist(establishment.get().getPlaylist().getPlaylistId(), spotifyAccessToken);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> getEstablishment(long establishmentId){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            Set<User> users = establishmentRepository.getUsersEstablishment(establishmentId);
+            EstablishmentDto establishmentDto = new EstablishmentDto(establishment.get().getEstablishmentId(), establishment.get().getName(), establishment.get().isOff(), users.size());
+
+            return ResponseEntity.status(HttpStatus.OK).body(establishmentDto);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
