@@ -123,11 +123,7 @@ public class AlgorithmService {
         }
 
         for(int i = 0; i < quantity; i++){
-            songsInPlaylistOfGenre.remove(random.nextInt(songsInPlaylistOfGenre.size()));
-        }
-
-        for(var item : songsInPlaylistOfGenre){
-            result.add(new Song(item.getUri(), item.getGenre()));
+            result.add(songsInPlaylistOfGenre.remove(random.nextInt(songsInPlaylistOfGenre.size())));
         }
 
         return result;
