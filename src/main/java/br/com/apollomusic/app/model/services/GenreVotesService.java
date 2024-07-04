@@ -15,23 +15,31 @@ public class GenreVotesService {
         this.playlistRepository = playlistRepository;
     }
 
-    public HashMap<String, Integer> getSongsQuantityPerGenre(String id){
+    public Playlist getPlaylist(String id){
+        var playlist = playlistRepository.findById(id).get();
+
+        if(playlist == null){
+            return null;
+        }
+        return  playlist;
+    }
+
+    public HashMap<String, Integer> getSongsQuantityPerGenre(Playlist playlist){
         int totalVotes = 0;
         HashMap<String, Integer> genresPercent = new HashMap<>();
         HashMap<String, Integer> songQuantityPerGenre = new HashMap<>();
-        var playlist = playlistRepository.findById(id);
 
         if(playlist == null){
             return null;
         }
 
         // foreach to get the total votes
-        for(Integer item : playlist.get().getGenres().values()){
+        for(Integer item : playlist.getGenres().values()){
             totalVotes += item;
         }
 
         // foreach to get the percentage of each genre in playlist
-        for(var item : playlist.get().getGenres().entrySet()){
+        for(var item : playlist.getGenres().entrySet()){
             int votesInGenre = item.getValue();
             genresPercent.put(item.getKey(), votesInGenre * 100 / totalVotes);
         }

@@ -2,9 +2,13 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.Spotify.dto.Playlist.ObjectUri;
 import br.com.apollomusic.app.Spotify.dto.Playlist.RecommendationsResDto;
+import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.entities.Playlist;
 import br.com.apollomusic.app.model.entities.Song;
+import br.com.apollomusic.app.repository.PlaylistRepository;
 import com.google.gson.Gson;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,8 +21,8 @@ public class AlgorithmService {
 
     private final PlaylistService playlistService;
 
-    public AlgorithmService(Playlist playlist, ApiService apiService, Gson gson, PlaylistService playlistService) {
-        this.genreVotesService = new GenreVotesService(playlist);
+    public AlgorithmService(GenreVotesService genreVotesService, ApiService apiService, Gson gson, PlaylistService playlistService) {
+        this.genreVotesService = genreVotesService;
         this.apiService = apiService;
         this.gson = gson;
         this.playlistService = playlistService;
@@ -28,36 +32,50 @@ public class AlgorithmService {
         return genreVotesService;
     }
 
-    public void runAlgorithm(String accessToken){
-        var votesInEachGenre = genreVotesService.getSongsQuantityPerGenre();
-        var songsInPlaylist = genreVotesService.getPlaylist().getSongs();
+    public ResponseEntity<?> runAlgorithm(String playlistId, String accessToken){
+        var playlist = genreVotesService.getPlaylist(playlistId);
+        if(playlist == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Playlist não encontrada."));
+        }
+
+        var votesInEachGenre = genreVotesService.getSongsQuantityPerGenre(playlist);
+        var songsInPlaylist = playlist.getSongs();
+
         int songsQuantity;
         Set<Song> songs;
 
         for(var item : votesInEachGenre.entrySet()){
             songsQuantity = getQuantityOfSongInPlaylistByGenre(item.getKey(), songsInPlaylist);
 
-            if(songsQuantity != item.getValue()){
-                if(songsQuantity < item.getValue()){
-                    songs = getRecommendations(item.getValue() - songsQuantity, item.getKey(), accessToken);
+            try {
+                if(songsQuantity != item.getValue()){
+                    if(songsQuantity < item.getValue()){
+                        songs = getRecommendations(item.getValue() - songsQuantity, item.getKey(), accessToken);
 
-                    playlistService.addSongsToPlaylist(
-                            genreVotesService.getPlaylist().getPlaylistId(),
-                            songs,
-                            accessToken
-                    );
-                }else{
-                    songs = getRandomSongsInPlaylistByGenre(songsQuantity - item.getValue(), item.getKey(), songsInPlaylist);
+                        playlistService.addSongsToPlaylist(
+                                playlist.getPlaylistId(),
+                                songs,
+                                accessToken
+                        );
+                    }else{
+                        songs = getRandomSongsInPlaylistByGenre(songsQuantity - item.getValue(), item.getKey(), songsInPlaylist);
 
-                    playlistService.removeSongsFromPlaylist(
-                            genreVotesService.getPlaylist().getPlaylistId(),
-                            songs,
-                            genreVotesService.getPlaylist().getLastSnapshotId(),
-                            accessToken
-                    );
+                        playlistService.removeSongsFromPlaylist(
+                                playlist.getPlaylistId(),
+                                songs,
+                                playlist.getLastSnapshotId(),
+                                accessToken
+                        );
+                    }
                 }
             }
+            catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+            }
         }
+        return ResponseEntity.ok().body("Algoritmo aplicado.");
     }
 
     private int getQuantityOfSongInPlaylistByGenre(String genre, Set<Song> songs){

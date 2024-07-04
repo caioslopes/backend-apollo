@@ -55,13 +55,12 @@ public class TestController {
         }
     }
 
-    @GetMapping("/apiTest/algorithm/{accessToken}")
+    @GetMapping("/apiTest/algorithm/{playlistId}/{accessToken}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<?> runAlgorithm(@PathVariable String accessToken) {
+    public ResponseEntity<?> runAlgorithm(@PathVariable String playlistId, @PathVariable String accessToken) {
 
-        RequestPlayer request = new RequestPlayer("device_id");
+        return algorithmService.runAlgorithm(playlistId, accessToken);
 
-        algorithmService.runAlgorithm(accessToken);
     }
 
     @PostMapping("/playlist/{playlistId}/songs")
