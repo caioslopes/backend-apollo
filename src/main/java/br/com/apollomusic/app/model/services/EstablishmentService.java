@@ -3,6 +3,7 @@ package br.com.apollomusic.app.model.services;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.dto.Establishment.EstablishmentDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
+import br.com.apollomusic.app.model.dto.Player.DeviceDto;
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.model.entities.User;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
@@ -17,10 +18,12 @@ public class EstablishmentService {
 
     private final EstablishmentRepository establishmentRepository;
     private final PlaylistService playlistService;
+    private final PlayerService playerService;
 
-    public EstablishmentService(EstablishmentRepository establishmentRepository, PlaylistService playlistService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, PlaylistService playlistService, PlayerService playerService) {
         this.establishmentRepository = establishmentRepository;
         this.playlistService = playlistService;
+        this.playerService = playerService;
     }
 
     public ResponseEntity<?> createPlaylist(long establishmentId, NewPlaylistDto newPlaylistDto){
@@ -171,5 +174,42 @@ public class EstablishmentService {
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
         }
     }
+
+    public ResponseEntity<?> getDevices(long establishmentId, String spotifyAccessToken){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            return playerService.getAvailableDevices(spotifyAccessToken);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
+    public ResponseEntity<?> setMainDevice(long establishmentId, DeviceDto deviceDto){
+        try {
+            Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            if(establishment.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
+            }
+
+            if(deviceDto.id().isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                        .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Corpo da requisição inválido"));
+            }
+
+            establishmentRepository.setDeviceId(establishmentId, deviceDto.id());
+            return ResponseEntity.status(HttpStatus.CREATED).body(deviceDto);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
+        }
+    }
+
 
 }

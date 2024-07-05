@@ -1,5 +1,6 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.model.dto.Player.DeviceDto;
 import br.com.apollomusic.app.model.dto.Token.SpotifyAccessTokenDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.dto.GenreDto;
@@ -66,6 +67,18 @@ public class EstablishmentController {
     @PreAuthorize("hasAnyAuthority('SCOPE_ROLE_ADMIN', 'SCOPE_ROLE_USER')")
     public ResponseEntity<?> decrementVoteGenres(@PathVariable long establishmentId, @RequestBody GenreDto genreDto){
         return establishmentService.decrementVoteGenres(establishmentId, genreDto.genres());
+    }
+
+    @GetMapping("/devices")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> getDevices(@PathVariable Long establishmentId, @RequestBody SpotifyAccessTokenDto spotifyAccessTokenDto) {
+        return establishmentService.getDevices(establishmentId, spotifyAccessTokenDto.spotifyAccessToken());
+    }
+
+    @PostMapping("/devices")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> setMainDevice(@PathVariable Long establishmentId, @RequestBody DeviceDto deviceDto){
+        return establishmentService.setMainDevice(establishmentId, deviceDto);
     }
 
 }
