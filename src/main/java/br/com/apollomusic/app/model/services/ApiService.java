@@ -22,40 +22,16 @@ public class ApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        StringBuilder urlBuilder = new StringBuilder(baseUrl);
-        urlBuilder.append("/").append(endpoint);
-        if (queryParams != null && !queryParams.isEmpty()) {
-            urlBuilder.append("?");
-            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
-                urlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-            }
-            urlBuilder.deleteCharAt(urlBuilder.length() - 1);
-        }
+        String url = mappingQueryParameters(endpoint, queryParams);
 
         HttpEntity<Void> request = new HttpEntity<>(null, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(urlBuilder.toString(), HttpMethod.GET, request, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
 
         return responseEntity.getBody();
     }
 
-    public <T> void post(String endpoint, T requestBody, String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(accessToken);
-
-        HttpEntity<T> request = new HttpEntity<>(requestBody, headers);
-
-        try {
-            ResponseEntity<String> responseEntity = restTemplate.exchange((baseUrl + endpoint), HttpMethod.POST, request, String.class);
-            responseEntity.getBody();
-        } catch (Exception e) {
-            e.getMessage();
-        }
-
-    }
-
-    public <T> String postWithResponse(String endpoint, T requestBody, String accessToken) {
+    public <T> String post(String endpoint, T requestBody, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(accessToken);
@@ -67,6 +43,21 @@ public class ApiService {
             return responseEntity.getBody();
         } catch (Exception e) {
             return "Error in postWithResponse";
+        }
+    }
+
+    public <T> String put(String endpoint, T requestBody, String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<T> request = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.exchange((baseUrl + endpoint), HttpMethod.PUT, request, String.class);
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            return "Error in put";
         }
     }
 
@@ -83,6 +74,19 @@ public class ApiService {
         } catch (Exception e) {
             return "Error in delete";
         }
+    }
+
+    private String mappingQueryParameters(String endpoint, Map<String, String> queryParams){
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+        urlBuilder.append("/").append(endpoint);
+        if (queryParams != null && !queryParams.isEmpty()) {
+            urlBuilder.append("?");
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                urlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            }
+            urlBuilder.deleteCharAt(urlBuilder.length() - 1);
+        }
+        return urlBuilder.toString();
     }
 
 }

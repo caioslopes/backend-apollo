@@ -1,6 +1,8 @@
 package br.com.apollomusic.app.controller;
 
+import br.com.apollomusic.app.Spotify.dto.Player.StartResumePlaybackSpotifyDto;
 import br.com.apollomusic.app.model.dto.AddSongsToPlaylistReqDto;
+import br.com.apollomusic.app.model.dto.Player.StartResumeDto;
 import br.com.apollomusic.app.model.dto.RemoveSongsFromPlaylistReqDto;
 import br.com.apollomusic.app.model.dto.Token.SpotifyAccessTokenDto;
 import br.com.apollomusic.app.model.services.AlgorithmService;
@@ -58,9 +60,7 @@ public class TestController {
 
     @PostMapping("/algorithm/{playlistId}")
     public ResponseEntity<?> runAlgorithm(@PathVariable String playlistId, @RequestBody SpotifyAccessTokenDto spotifyAccessTokenDto) {
-
         return algorithmService.runAlgorithm(playlistId, spotifyAccessTokenDto.spotifyAccessToken());
-
     }
 
     @PostMapping("/playlist/{playlistId}/songs")
@@ -73,6 +73,14 @@ public class TestController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> removeSongsFromPlaylist(@PathVariable String playlistId, @RequestBody RemoveSongsFromPlaylistReqDto removeSongsFromPlaylistReqDto){
         return playlistService.removeSongsFromPlaylist(playlistId, removeSongsFromPlaylistReqDto.songs(), removeSongsFromPlaylistReqDto.snapshot_id(), removeSongsFromPlaylistReqDto.spotifyAccessToken());
+    }
+
+    @PutMapping("/player/play")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> startResumePlayback(@RequestBody StartResumeDto startResumeDto) {
+        StartResumePlaybackSpotifyDto startResumePlaybackSpotifyDto = new StartResumePlaybackSpotifyDto(startResumeDto.context_uri());
+        String endpoint = "/me/player/play?device_id=" + startResumeDto.deviceId();
+        return ResponseEntity.ok(apiService.put(endpoint, startResumePlaybackSpotifyDto, startResumeDto.spotifyAccessToken()));
     }
 
 }
