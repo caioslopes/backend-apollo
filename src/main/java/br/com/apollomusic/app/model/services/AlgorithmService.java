@@ -15,7 +15,7 @@ import java.util.*;
 
 @Service
 public class AlgorithmService {
-    private  GenreVotesService genreVotesService;
+    private final GenreVotesService genreVotesService;
     private final ApiService apiService;
     private final Gson gson;
 

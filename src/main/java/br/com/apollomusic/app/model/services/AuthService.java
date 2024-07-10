@@ -43,6 +43,11 @@ public class AuthService {
             Optional<Establishment> establishmentOpt = establishmentRepository.findById(userReqDto.establishmentId());
             Establishment establishment = establishmentOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estabelecimento não encontrado"));
 
+            if(establishment.isOff()){
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                        .body(new ErrorResDto(HttpStatus.NOT_ACCEPTABLE.value(), "O estabelecimento está offline"));
+            }
+
             Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Papel 'ROLE_USER' não encontrado"));
 
             User user = new User(establishment, userReqDto.username(), new HashSet<>(userReqDto.genres()), Set.of(userRole));
