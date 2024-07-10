@@ -51,7 +51,7 @@ public class AuthService {
             playlistService.incrementVoteGenres(establishment.getPlaylist().getPlaylistId(), userReqDto.genres());
 
             String token = jwtUtil.createTokenUser(user);
-            return ResponseEntity.ok().body(new UserResDto(user.getUserName(), token));
+            return ResponseEntity.ok().body(new UserResDto(user.getUsername(), token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));

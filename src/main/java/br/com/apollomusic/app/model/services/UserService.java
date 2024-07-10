@@ -29,7 +29,7 @@ public class UserService {
                         .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado"));
             }
 
-            UserDto userDto = new UserDto(user.get().getUserId(), user.get().getUserName(), user.get().getGenres());
+            UserDto userDto = new UserDto(user.get().getUserId(), user.get().getUsername(), user.get().getGenres());
             return ResponseEntity.ok().body(userDto);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

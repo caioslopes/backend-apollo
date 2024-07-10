@@ -14,7 +14,7 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    private String userName;
+    private String username;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "establishment_id")
@@ -35,17 +35,17 @@ public class User {
 
     public User() {}
 
-    public User(Long userId, String userName, Establishment establishment, Set<String> genres, Set<Role> roles) {
+    public User(Long userId, String username, Establishment establishment, Set<String> genres, Set<Role> roles) {
         this.userId = userId;
-        this.userName = userName;
+        this.username = username;
         this.establishment = establishment;
         this.genres = genres;
         this.roles = roles;
     }
 
-    public User(Establishment establishment, String userName, Set<String> genres, Set<Role> roles) {
+    public User(Establishment establishment, String username, Set<String> genres, Set<Role> roles) {
         this.establishment = establishment;
-        this.userName = userName;
+        this.username = username;
         this.genres = genres;
         this.roles = roles;
     }
@@ -58,12 +58,12 @@ public class User {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Establishment getEstablishment() {
