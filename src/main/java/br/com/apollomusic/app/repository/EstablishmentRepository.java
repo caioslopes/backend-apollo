@@ -26,4 +26,12 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
         return establishment.getUsers();
     }
 
+    @Modifying
+    default void setDeviceId(Long establishmentId, String deviceId){
+        Establishment establishment = findById(establishmentId).orElseThrow();
+        establishment.setDeviceId(deviceId);
+        save(establishment);
+    }
+
+
 }

@@ -18,13 +18,13 @@ public class PlaylistSpotifyService {
 
     public NewPlaylistSpotifyResDto createPlaylist(String userid, NewPlaylistSpotifyDto newPlaylistSpotifyDto, String spotifyAccessToken){
         String endpoint = "/users/" + userid + "/playlists";
-        String response = apiService.postWithResponse(endpoint, newPlaylistSpotifyDto, spotifyAccessToken);
+        String response = apiService.post(endpoint, newPlaylistSpotifyDto, spotifyAccessToken);
         return gson.fromJson(response, NewPlaylistSpotifyResDto.class);
     }
 
     public AddItemToPlaylistResDto addItemsToPlaylist(String playlistId, AddItemToPlaylistReqDto addItemToPlaylistReqDto, String spotifyAccessToken){
         String endpoint = "/playlists/" + playlistId + "/tracks";
-        String response = apiService.postWithResponse(endpoint, addItemToPlaylistReqDto, spotifyAccessToken);
+        String response = apiService.post(endpoint, addItemToPlaylistReqDto, spotifyAccessToken);
         return gson.fromJson(response, AddItemToPlaylistResDto.class);
     }
 
