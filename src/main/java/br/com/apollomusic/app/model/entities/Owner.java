@@ -33,23 +33,22 @@ public class Owner {
     private Set<Role> roles = new HashSet<>();
 
     private String refreshToken;
+    private String accessToken;
+    private Long tokenExpiresIn;
 
-    public  Owner() {}
+    public Owner() {
+    }
 
-    public Owner(String name, String email, String password, Establishment establishment,  Set<Role> roles) {
+    public Owner(Long ownerId, String name, String email, String password, Establishment establishment, Set<Role> roles, String refreshToken, String accessToken, Long tokenExpiresIn) {
+        this.ownerId = ownerId;
         this.name = name;
         this.email = email;
         this.password = password;
         this.establishment = establishment;
         this.roles = roles;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+        this.tokenExpiresIn = tokenExpiresIn;
     }
 
     public Long getOwnerId() {
@@ -60,9 +59,13 @@ public class Owner {
         this.ownerId = ownerId;
     }
 
-    public String getName(){return this.name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setNome(String name){ this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getEmail() {
         return email;
@@ -94,5 +97,29 @@ public class Owner {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public Long getTokenExpiresIn() {
+        return tokenExpiresIn;
+    }
+
+    public void setTokenExpiresIn(Long tokenExpiresIn) {
+        this.tokenExpiresIn = tokenExpiresIn;
     }
 }

@@ -19,4 +19,13 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
         save(owner);
     }
 
+    @Modifying
+    default void updateAuthCredentials(String email, String refreshToken, String accessToken, Integer expiresIn) {
+        Owner owner = findByEmail(email).orElseThrow();
+        owner.setAccessToken(accessToken);
+        owner.setTokenExpiresIn(System.currentTimeMillis() + expiresIn * 1000);
+        if(refreshToken != null) owner.setRefreshToken(refreshToken);
+        save(owner);
+    }
+
 }

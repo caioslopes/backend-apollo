@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.infra;
+package br.com.apollomusic.app.infra.config;
 
 import br.com.apollomusic.app.model.services.CustomUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;

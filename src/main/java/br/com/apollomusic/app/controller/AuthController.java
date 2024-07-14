@@ -42,10 +42,10 @@ public class AuthController {
         return apiAuthService.getAccessTokenFromApi(reqDto);
     }
 
-    @PostMapping("/api/renew")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<?> renewApi(@RequestBody OwnerApiAuthReqDto reqDto) {
-        return apiAuthService.renewAccessToken(reqDto);
-    }
+//    @PostMapping("/api/renew")
+//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+//    public ResponseEntity<?> renewApi(@RequestBody OwnerApiAuthReqDto reqDto) {
+//        return apiAuthService.renewAccessToken(reqDto);
+//    }
 
 }
