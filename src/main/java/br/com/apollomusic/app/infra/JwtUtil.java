@@ -60,16 +60,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String extractEmailFromToken(Authentication authentication) {
+    public <T> T extractItemFromToken(Authentication authentication, String item) {
         JwtAuthenticationToken jwtAuthToken = (JwtAuthenticationToken) authentication;
         Map<String, Object> claims = jwtAuthToken.getTokenAttributes();
-        return (String) claims.get("email");
-    }
-
-    public Long extractEstablishmentIdFromToken(Authentication authentication) {
-        JwtAuthenticationToken jwtAuthToken = (JwtAuthenticationToken) authentication;
-        Map<String, Object> claims = jwtAuthToken.getTokenAttributes();
-        return (Long) claims.get("establishmentId");
+        return (T) claims.get(item);
     }
 
     public String extractEmail(String token) {

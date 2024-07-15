@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +23,7 @@ public class OwnerController {
     @GetMapping()
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> getOwner(Authentication authentication) {
-        String email = jwtUtil.extractEmailFromToken(authentication);
-        return ownerService.getOwnerByEmail(email);
+        String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
+        return ownerService.getOwnerByEmail(ownerEmail);
     }
 }

@@ -33,7 +33,6 @@ public class Owner {
     private Set<Role> roles = new HashSet<>();
 
     private String refreshToken;
-    @Lob
     @Column(length = 512)
     private String accessToken;
     private Long tokenExpiresIn;
