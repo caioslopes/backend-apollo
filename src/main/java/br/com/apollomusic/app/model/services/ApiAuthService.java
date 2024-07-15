@@ -30,7 +30,7 @@ public class ApiAuthService {
         this.ownerRepository = ownerRepository;
     }
 
-    public ResponseEntity<ResponseTokenDto> getAccessTokenFromApi(OwnerApiAuthReqDto reqDto) {
+    public ResponseEntity<ResponseTokenDto> getAccessTokenFromApi(OwnerApiAuthReqDto reqDto, String email) {
         requestTokenDto.setCode(reqDto.code());
 
         MultiValueMap<String, String> paramsApi = new LinkedMultiValueMap<>();
@@ -48,7 +48,7 @@ public class ApiAuthService {
         try {
             responseEntity = restTemplate.postForEntity(baseUrl, request, ResponseTokenDto.class);
             if (responseEntity.getBody() != null) {
-                ownerRepository.updateAuthCredentials(reqDto.email(), responseEntity.getBody().refresh_token(), responseEntity.getBody().access_token(), responseEntity.getBody().expires_in());
+                ownerRepository.updateAuthCredentials(email, responseEntity.getBody().refresh_token(), responseEntity.getBody().access_token(), responseEntity.getBody().expires_in());
             }
             return responseEntity;
         } catch (Exception e) {
