@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class TokenInterceptor implements HandlerInterceptor {
+public class ApiTokenInterceptor implements HandlerInterceptor {
 
     @Autowired
     private OwnerRepository ownerRepository;
@@ -31,6 +31,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         if (email != null) {
             var ownerInfo = ownerRepository.findByEmail(email).get();
+            if(ownerInfo.getRefreshToken() == null) return true;
             if (ownerInfo.getAccessToken() == null || apiAuthService.isTokenExpired(ownerInfo.getTokenExpiresIn())) {
                 apiAuthService.renewAccessToken(ownerInfo);
             }

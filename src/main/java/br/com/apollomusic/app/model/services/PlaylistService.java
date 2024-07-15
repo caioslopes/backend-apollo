@@ -8,7 +8,6 @@ import br.com.apollomusic.app.Spotify.services.PlaylistSpotifyService;
 import br.com.apollomusic.app.Spotify.services.UserSpotifyService;
 import br.com.apollomusic.app.Spotify.utils.GenerateDefaultInformation;
 import br.com.apollomusic.app.model.dto.ErrorResDto;
-import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.dto.Playlist.PlaylistDto;
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.model.entities.Playlist;

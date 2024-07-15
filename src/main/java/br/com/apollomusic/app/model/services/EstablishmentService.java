@@ -2,7 +2,6 @@ package br.com.apollomusic.app.model.services;
 
 import br.com.apollomusic.app.model.dto.ErrorResDto;
 import br.com.apollomusic.app.model.dto.Establishment.EstablishmentDto;
-import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.dto.Player.DeviceDto;
 import br.com.apollomusic.app.model.entities.Establishment;
 import br.com.apollomusic.app.model.entities.Owner;
