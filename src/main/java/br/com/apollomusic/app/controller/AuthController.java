@@ -37,7 +37,10 @@ public class AuthController {
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<?> logoutUser(@RequestBody LogoutUserDto logoutUserDto) {
+    public ResponseEntity<?> logoutUser(Authentication authentication) {
+        Long userId = jwtUtil.extractItemFromToken(authentication, "userId");
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        LogoutUserDto logoutUserDto = new LogoutUserDto(userId, establishmentId);
         return  authService.logoutUser(logoutUserDto);
     }
 
