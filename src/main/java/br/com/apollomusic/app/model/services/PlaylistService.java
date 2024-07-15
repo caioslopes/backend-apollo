@@ -40,7 +40,7 @@ public class PlaylistService {
         this.genreSpotifyService = genreSpotifyService;
     }
 
-    public ResponseEntity<?> createPlaylist(long establishmentId, NewPlaylistDto newPlaylistDto){
+    public ResponseEntity<?> createPlaylist(long establishmentId, String accessToken){
         try {
             Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
             if(establishment.isEmpty()){
@@ -49,10 +49,10 @@ public class PlaylistService {
             }
 
             NewPlaylistSpotifyDto newPlaylistSpotifyDto = GenerateDefaultInformation.generateDefaultPlaylist(establishment.get().getName());
-            UserSpotifyDto userSpotifyDto = userSpotifyService.getUserOnSpotify(newPlaylistDto.spotifyAccessToken());
-            NewPlaylistSpotifyResDto newPlaylistSpotifyResDto = playlistSpotifyService.createPlaylist(userSpotifyDto.id(), newPlaylistSpotifyDto, newPlaylistDto.spotifyAccessToken());
+            UserSpotifyDto userSpotifyDto = userSpotifyService.getUserOnSpotify(accessToken);
+            NewPlaylistSpotifyResDto newPlaylistSpotifyResDto = playlistSpotifyService.createPlaylist(userSpotifyDto.id(), newPlaylistSpotifyDto, accessToken);
 
-            AvailableGenresDto availableGenres = genreSpotifyService.getAvailableGenres(newPlaylistDto.spotifyAccessToken());
+            AvailableGenresDto availableGenres = genreSpotifyService.getAvailableGenres(accessToken);
             Map<String, Integer> genres = new HashMap<>();
             for (String genre : availableGenres.genres()){
                 genres.put(genre, 0);

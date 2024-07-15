@@ -66,6 +66,12 @@ public class JwtUtil {
         return (String) claims.get("email");
     }
 
+    public Long extractEstablishmentIdFromToken(Authentication authentication) {
+        JwtAuthenticationToken jwtAuthToken = (JwtAuthenticationToken) authentication;
+        Map<String, Object> claims = jwtAuthToken.getTokenAttributes();
+        return (Long) claims.get("establishmentId");
+    }
+
     public String extractEmail(String token) {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }

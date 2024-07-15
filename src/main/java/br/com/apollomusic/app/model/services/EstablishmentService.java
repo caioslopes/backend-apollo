@@ -5,8 +5,11 @@ import br.com.apollomusic.app.model.dto.Establishment.EstablishmentDto;
 import br.com.apollomusic.app.model.dto.NewPlaylistDto;
 import br.com.apollomusic.app.model.dto.Player.DeviceDto;
 import br.com.apollomusic.app.model.entities.Establishment;
+import br.com.apollomusic.app.model.entities.Owner;
 import br.com.apollomusic.app.model.entities.User;
 import br.com.apollomusic.app.repository.EstablishmentRepository;
+import br.com.apollomusic.app.repository.OwnerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,25 +19,26 @@ import java.util.*;
 @Service
 public class EstablishmentService {
 
-    private final EstablishmentRepository establishmentRepository;
-    private final PlaylistService playlistService;
-    private final PlayerService playerService;
+    @Autowired
+    private EstablishmentRepository establishmentRepository;
+    @Autowired
+    private OwnerRepository ownerRepository;
+    @Autowired
+    private PlaylistService playlistService;
+    @Autowired
+    private PlayerService playerService;
 
-    public EstablishmentService(EstablishmentRepository establishmentRepository, PlaylistService playlistService, PlayerService playerService) {
-        this.establishmentRepository = establishmentRepository;
-        this.playlistService = playlistService;
-        this.playerService = playerService;
-    }
 
-    public ResponseEntity<?> createPlaylist(long establishmentId, NewPlaylistDto newPlaylistDto){
+    public ResponseEntity<?> createPlaylist(long establishmentId, String ownerEmail){
         try {
             Establishment establishment = establishmentRepository.findById(establishmentId).get();
+            Owner owner = ownerRepository.findByEmail(ownerEmail).get();
             if(establishment.getEstablishmentId() == null){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
             }
 
-            return playlistService.createPlaylist(establishmentId, newPlaylistDto);
+            return playlistService.createPlaylist(establishmentId, owner.getAccessToken());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
@@ -142,15 +146,16 @@ public class EstablishmentService {
         }
     }
 
-    public ResponseEntity<?> getPlaylist(long establishmentId, String spotifyAccessToken){
+    public ResponseEntity<?> getPlaylist(long establishmentId, String emailOwner){
         try {
             Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            Owner ownerInfos = ownerRepository.findByEmail(emailOwner).get();
             if(establishment.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
             }
 
-            return playlistService.getPlaylist(establishment.get().getPlaylist().getPlaylistId(), spotifyAccessToken);
+            return playlistService.getPlaylist(establishment.get().getPlaylist().getPlaylistId(), ownerInfos.getAccessToken());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
@@ -175,15 +180,16 @@ public class EstablishmentService {
         }
     }
 
-    public ResponseEntity<?> getDevices(long establishmentId, String spotifyAccessToken){
+    public ResponseEntity<?> getDevices(long establishmentId, String ownerEmail){
         try {
             Optional<Establishment> establishment = establishmentRepository.findById(establishmentId);
+            Owner ownerInfos = ownerRepository.findByEmail(ownerEmail).get();
             if(establishment.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResDto(HttpStatus.NOT_FOUND.value(), "Estabelecimento não encontrado"));
             }
 
-            return playerService.getAvailableDevices(spotifyAccessToken);
+            return playerService.getAvailableDevices(ownerInfos.getAccessToken());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor"));
