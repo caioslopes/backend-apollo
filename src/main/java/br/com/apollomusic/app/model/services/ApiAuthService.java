@@ -4,6 +4,7 @@ package br.com.apollomusic.app.model.services;
 import br.com.apollomusic.app.model.dto.OwnerApiAuthReqDto;
 import br.com.apollomusic.app.model.dto.RequestTokenDto;
 import br.com.apollomusic.app.model.dto.ResponseTokenDto;
+import br.com.apollomusic.app.model.entities.Owner;
 import br.com.apollomusic.app.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -29,7 +30,7 @@ public class ApiAuthService {
         this.ownerRepository = ownerRepository;
     }
 
-    public ResponseEntity<ResponseTokenDto> getAccessTokenFromApi(OwnerApiAuthReqDto reqDto) {
+    public ResponseEntity<ResponseTokenDto> getAccessTokenFromApi(OwnerApiAuthReqDto reqDto, String email) {
         requestTokenDto.setCode(reqDto.code());
 
         MultiValueMap<String, String> paramsApi = new LinkedMultiValueMap<>();
@@ -46,37 +47,35 @@ public class ApiAuthService {
         ResponseEntity<ResponseTokenDto> responseEntity;
         try {
             responseEntity = restTemplate.postForEntity(baseUrl, request, ResponseTokenDto.class);
+            if (responseEntity.getBody() != null) {
+                ownerRepository.updateAuthCredentials(email, responseEntity.getBody().refresh_token(), responseEntity.getBody().access_token(), responseEntity.getBody().expires_in());
+            }
+            return responseEntity;
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        if (responseEntity.getBody() != null) {
-            ownerRepository.updateRefreshToken(reqDto.email(), responseEntity.getBody().refresh_token());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        return ResponseEntity.ok(responseEntity.getBody());
     }
 
 
-    public ResponseEntity<ResponseTokenDto> renewAccessToken(OwnerApiAuthReqDto reqDto) {
-        var owner = ownerRepository.findByEmail(reqDto.email());
+    public void renewAccessToken(Owner owner) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBasicAuth(requestTokenDto.getClientId(), requestTokenDto.getClientSecret());
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("refresh_token", owner.get().getRefreshToken());
+        params.add("refresh_token", owner.getRefreshToken());
         params.add("grant_type", "refresh_token");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         ResponseEntity<ResponseTokenDto> responseEntity = restTemplate.postForEntity(baseUrl, request, ResponseTokenDto.class);
+        if (responseEntity.getBody() != null) {
+            ownerRepository.updateAuthCredentials(owner.getEmail(), null, responseEntity.getBody().access_token(), responseEntity.getBody().expires_in());
+        }
+    }
 
-        return ResponseEntity.ok(responseEntity.getBody());
-
+    public boolean isTokenExpired(Long expiresIn) {
+        return System.currentTimeMillis() > expiresIn;
     }
 }

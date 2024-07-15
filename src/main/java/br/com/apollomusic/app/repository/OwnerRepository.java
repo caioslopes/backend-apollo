@@ -13,9 +13,11 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
     Optional<Owner> findByEmail(String email);
 
     @Modifying
-    default void updateRefreshToken(String email, String refreshToken) {
+    default void updateAuthCredentials(String email, String refreshToken, String accessToken, Integer expiresIn) {
         Owner owner = findByEmail(email).orElseThrow();
-        owner.setRefreshToken(refreshToken);
+        owner.setAccessToken(accessToken);
+        owner.setTokenExpiresIn(System.currentTimeMillis() + expiresIn * 1000);
+        if(refreshToken != null) owner.setRefreshToken(refreshToken);
         save(owner);
     }
 

@@ -37,6 +37,7 @@ public class InitialDataLoader implements CommandLineRunner {
 
             Owner owner = new Owner();
             owner.setEmail("zinho@gmail.com");
+            owner.setName("Zinho o Dono");
             owner.setPassword(passwordEncoder.encode("123"));
             owner.setRoles(Set.of(roleAdmin));
 
