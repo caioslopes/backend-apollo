@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/owner").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/establishment/{id}").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder())))
