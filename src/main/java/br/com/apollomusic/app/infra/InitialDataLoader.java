@@ -1,11 +1,11 @@
 package br.com.apollomusic.app.infra;
 
-import br.com.apollomusic.app.repository.EstablishmentRepository;
-import br.com.apollomusic.app.repository.OwnerRepository;
-import br.com.apollomusic.app.repository.RoleRepository;
-import br.com.apollomusic.app.model.entities.Establishment;
-import br.com.apollomusic.app.model.entities.Owner;
-import br.com.apollomusic.app.model.entities.Role;
+import br.com.apollomusic.app.domain.entities.Establishment;
+import br.com.apollomusic.app.domain.entities.Owner;
+import br.com.apollomusic.app.domain.entities.Role;
+import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
+import br.com.apollomusic.app.infra.repository.OwnerRepository;
+import br.com.apollomusic.app.infra.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
