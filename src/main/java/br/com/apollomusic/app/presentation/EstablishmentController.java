@@ -1,9 +1,9 @@
-package br.com.apollomusic.app.application;
+package br.com.apollomusic.app.presentation;
 
 import br.com.apollomusic.app.domain.payload.request.ManipulateGenreRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.infra.config.JwtUtil;
-import br.com.apollomusic.app.domain.services.EstablishmentService;
+import br.com.apollomusic.app.domain.Establishment.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,8 +43,7 @@ public class EstablishmentController {
     @GetMapping("/playlist")
     public ResponseEntity<?> getPlaylist(Authentication authentication) {
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
-        String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
-        return establishmentService.getPlaylist(establishmentId, ownerEmail);
+        return establishmentService.getPlaylist(establishmentId);
     }
 
     @PostMapping("/playlist")
@@ -97,5 +96,25 @@ public class EstablishmentController {
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
         return establishmentService.setMainDevice(establishmentId, setDeviceRequest);
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getUser(Authentication authentication) {
+        Long userID = jwtUtil.extractItemFromToken(authentication, "userId");
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.getUser(establishmentId, userID);
+    }
+
+//    @PostMapping("/user")
+//    public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
+//        return authService.loginUser(loginUserRequest);
+//    }
+//
+//    @DeleteMapping("/user")
+//    public ResponseEntity<?> logoutUser(Authentication authentication) {
+//        Long userId = jwtUtil.extractItemFromToken(authentication, "userId");
+//        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+//        LogoutUserRequest logoutUserRequest = new LogoutUserRequest(userId, establishmentId);
+//        return  authService.logoutUser(logoutUserRequest);
+//    }
 
 }

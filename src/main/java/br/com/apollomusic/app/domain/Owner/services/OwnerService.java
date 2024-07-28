@@ -1,6 +1,6 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.domain.Owner.services;
 
-import br.com.apollomusic.app.domain.entities.Owner;
+import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.response.OwnerResponse;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class OwnerService {
 
     public ResponseEntity<OwnerResponse> getOwnerByEmail(String email){
         Owner owner = ownerRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        OwnerResponse ownerResponse = new OwnerResponse(owner.getName(), owner.getEmail(), owner.getRoles(), owner.getRefreshToken());
+        OwnerResponse ownerResponse = new OwnerResponse(owner.getName(), owner.getEmail(), owner.getRefreshToken());
         return new ResponseEntity<>(ownerResponse, HttpStatus.OK);
     }
 

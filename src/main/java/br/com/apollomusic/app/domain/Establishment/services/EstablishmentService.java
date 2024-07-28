@@ -1,9 +1,15 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.domain.Establishment.services;
 
-import br.com.apollomusic.app.domain.entities.*;
+import br.com.apollomusic.app.domain.Establishment.Establishment;
+import br.com.apollomusic.app.domain.Establishment.Playlist;
+import br.com.apollomusic.app.domain.Establishment.Song;
+import br.com.apollomusic.app.domain.Establishment.User;
+import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.domain.payload.response.CreatePlaylistResponse;
 import br.com.apollomusic.app.domain.payload.response.DeviceResponse;
+import br.com.apollomusic.app.domain.payload.response.UserReponse;
+import br.com.apollomusic.app.domain.services.ThirdPartyService;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +40,7 @@ public class EstablishmentService {
             if (establishment.getPlaylist().getVotesQuantity() > 0){
                 establishment.setOff(false);
                 establishmentRepository.save(establishment);
-                return ResponseEntity.status(HttpStatus.OK).body(establishment.getEstablishmentId());
+                return ResponseEntity.status(HttpStatus.OK).body(establishment.getId());
             }
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Selecione Gêneros");
 
@@ -48,7 +54,7 @@ public class EstablishmentService {
         if (!establishment.isOff()){
             establishment.setOff(true);
             establishmentRepository.save(establishment);
-            return ResponseEntity.status(HttpStatus.OK).body(establishment.getEstablishmentId());
+            return ResponseEntity.status(HttpStatus.OK).body(establishment.getId());
         }
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Erro ao desligar Estabelicimento");
@@ -60,7 +66,7 @@ public class EstablishmentService {
 
         CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", owner.getAccessToken());
 
-        Playlist playlist = new Playlist(createPlaylistResponse.id(), new HashSet<>(), new HashSet<>(), new HashMap<>(), createPlaylistResponse.snapshot_id());
+        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), new HashSet<>(), new HashMap<>(), new HashSet<>());
 
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
@@ -68,7 +74,7 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> addSongsToPlaylist(long establishmentId, Set<Song> songs){
+    public void addSongsToPlaylist(long establishmentId, Set<Song> songs){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Owner owner = establishment.getOwner();
         Playlist playlist = establishment.getPlaylist();
@@ -80,12 +86,10 @@ public class EstablishmentService {
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
 
-        thirdPartyService.addSongsToPlaylist(playlist.getPlaylistId(), songs, owner.getAccessToken());
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        thirdPartyService.addSongsToPlaylist(playlist.getId(), songs, owner.getAccessToken());
     }
 
-    public ResponseEntity<?> removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
+    public void removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Owner owner = establishment.getOwner();
         Playlist playlist = establishment.getPlaylist();
@@ -97,9 +101,7 @@ public class EstablishmentService {
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
 
-        thirdPartyService.removeSongsFromPlaylist(playlist.getPlaylistId(), playlist.getLastSnapshotId(), songs, owner.getAccessToken());
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        thirdPartyService.removeSongsFromPlaylist(playlist.getId(), playlist.getSnapshot(), songs, owner.getAccessToken());
     }
 
     public ResponseEntity<?> addBlockGenres(long establishmentId, Set<String> genres){
@@ -150,13 +152,11 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> getPlaylist(long establishmentId, String emailOwner){
+    public ResponseEntity<?> getPlaylist(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Playlist playlist = establishment.getPlaylist();
         return ResponseEntity.ok(playlist);
     }
-
-
 
     public ResponseEntity<?> getEstablishment(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -179,5 +179,14 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    public ResponseEntity<UserReponse> getUser(long establishmentId, Long userId){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        User user = establishment.getUser(userId);
+
+        if(user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        UserReponse userReponse = new UserReponse(user.getId(), user.getUsername(), user.getGenres(), establishment.getId());
+        return new ResponseEntity<>(userReponse, HttpStatus.OK);
+    }
 
 }

@@ -1,7 +1,7 @@
 package br.com.apollomusic.app.domain.payload.response;
 
-import br.com.apollomusic.app.domain.entities.Role;
+import br.com.apollomusic.app.domain.Establishment.Role;
 import java.util.Set;
 
-public record OwnerResponse(String name, String email, Set<Role> roles, String refreshToken) {
+public record OwnerResponse(String name, String email, String refreshToken) {
 }

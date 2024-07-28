@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.domain.services;
 
-import br.com.apollomusic.app.domain.entities.Song;
+import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.payload.ObjectUri;
 import br.com.apollomusic.app.domain.payload.request.AddSongsToPlaylistRequest;
 import br.com.apollomusic.app.domain.payload.request.CreatePlaylistRequest;

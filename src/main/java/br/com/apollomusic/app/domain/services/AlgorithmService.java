@@ -1,9 +1,10 @@
 package br.com.apollomusic.app.domain.services;
 
-import br.com.apollomusic.app.domain.entities.Establishment;
-import br.com.apollomusic.app.domain.entities.Owner;
-import br.com.apollomusic.app.domain.entities.Playlist;
-import br.com.apollomusic.app.domain.entities.Song;
+import br.com.apollomusic.app.domain.Establishment.Establishment;
+import br.com.apollomusic.app.domain.Establishment.services.EstablishmentService;
+import br.com.apollomusic.app.domain.Owner.Owner;
+import br.com.apollomusic.app.domain.Establishment.Playlist;
+import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.payload.response.RecommendationsResponse;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class AlgorithmService {
         Owner owner = establishment.getOwner();
         Playlist playlist = establishment.getPlaylist();
 
-        var songsQuantityPerGenre = getSongsQuantityPerGenre(playlist);
-        var songsInPlaylist = playlist.getSongs();
+        HashMap<String, Integer> songsQuantityPerGenre = getSongsQuantityPerGenre(playlist);
+        Set<Song> songsInPlaylist = (Set<Song>) playlist.getSongs();
 
         int songsQuantity;
         Set<Song> songs;
@@ -41,10 +42,10 @@ public class AlgorithmService {
             if(songsQuantity != item.getValue()){
                 if(songsQuantity < item.getValue()){
                     songs = getRecommendations(item.getValue() - songsQuantity, item.getKey(), owner.getAccessToken());
-                    establishmentService.addSongsToPlaylist(establishment.getEstablishmentId(), songs);
+                    establishmentService.addSongsToPlaylist(establishment.getId(), songs);
                 }else{
                     songs = getRandomSongsInPlaylistByGenre(songsQuantity - item.getValue(), item.getKey(), songsInPlaylist);
-                    establishmentService.removeSongsFromPlaylist(establishment.getEstablishmentId(), songs);
+                    establishmentService.removeSongsFromPlaylist(establishment.getId(), songs);
                 }
             }
         }

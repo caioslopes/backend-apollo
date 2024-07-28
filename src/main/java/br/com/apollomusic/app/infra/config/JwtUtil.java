@@ -1,8 +1,8 @@
 package br.com.apollomusic.app.infra.config;
 
-import br.com.apollomusic.app.domain.entities.Owner;
-import br.com.apollomusic.app.domain.entities.Role;
-import br.com.apollomusic.app.domain.entities.User;
+import br.com.apollomusic.app.domain.Owner.Owner;
+import br.com.apollomusic.app.domain.Establishment.Role;
+import br.com.apollomusic.app.domain.Establishment.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,9 +32,8 @@ public class JwtUtil {
 
     public String createTokenUser(User user) {
         Claims claims = Jwts.claims();
-        claims.put("userId", user.getUserId());
-        claims.put("establishmentId", user.getEstablishment().getEstablishmentId());
-        claims.put("scope", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        claims.put("userId", user.getId());
+//        claims.put("establishmentId", user.getEstablishment().getEstablishmentId());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 2));
         return Jwts.builder()
@@ -46,9 +45,9 @@ public class JwtUtil {
 
     public String createTokenOwner(Owner owner) {
         Claims claims = Jwts.claims();
-        claims.put("ownerId", owner.getOwnerId());
-        claims.put("establishmentId", owner.getEstablishment().getEstablishmentId());
-        claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        claims.put("ownerId", owner.getId());
+        claims.put("establishmentId", owner.getEstablishment().getId());
+//        claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         claims.put("email", owner.getEmail());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 20));

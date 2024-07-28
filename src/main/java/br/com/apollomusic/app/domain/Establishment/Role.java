@@ -1,11 +1,9 @@
-package br.com.apollomusic.app.domain.entities;
+package br.com.apollomusic.app.domain.Establishment;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
-
 @Entity
-@Table(name = "tb_roles")
+@Table(name = "roles")
 public class Role {
 
     @Id
@@ -13,9 +11,6 @@ public class Role {
     @Column(name = "role_id")
     private Long roleId;
     private String name;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
 
     public Role () {}
 
@@ -42,13 +37,5 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
     }
 }

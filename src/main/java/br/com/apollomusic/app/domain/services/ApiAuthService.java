@@ -5,7 +5,7 @@ import br.com.apollomusic.app.domain.payload.request.AuthorizeThirdPartyRequest;
 import br.com.apollomusic.app.domain.payload.request.ThirdPartyAccessRequest;
 import br.com.apollomusic.app.domain.payload.response.ThirdPartyAccessResponse;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
-import br.com.apollomusic.app.domain.entities.Owner;
+import br.com.apollomusic.app.domain.Owner.Owner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -84,7 +84,7 @@ public class ApiAuthService {
         }
     }
 
-    public boolean isTokenExpired(Long expiresIn) {
+    public boolean isTokenExpired(int expiresIn) {
         return System.currentTimeMillis() > expiresIn;
     }
 }

@@ -1,67 +1,66 @@
-package br.com.apollomusic.app.domain.entities;
+package br.com.apollomusic.app.domain.Establishment;
 
 import jakarta.persistence.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-@Embeddable
+@Entity
 public class Playlist {
 
     public static final int SONGLIMIT = 50;
 
-    private String playlistId;
+    @Id
+    private String id;
 
-    private String lastSnapshotId;
-
-    @ElementCollection
-    @CollectionTable(name = "tb_playlist_songs", joinColumns = @JoinColumn(name = "playlist_id"))
-    private Set<Song> songs = new HashSet<>();
+    private String snapshot;
 
     @ElementCollection
-    @CollectionTable(name = "tb_blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
+    @CollectionTable(name = "blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @Column(name = "genre")
-    private Set<String> blockedGenres = new HashSet<>();
+    private Collection<String> blockedGenres = new HashSet<>();
 
     @ElementCollection
-    @CollectionTable(name = "tb_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
+    @CollectionTable(name = "genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @MapKeyColumn(name = "genre")
     @Column(name = "votes")
     private Map<String, Integer> genres = new HashMap<>();
 
-    public Playlist(String playlistId, Set<Song> songs, Set<String> blockedGenres, Map<String, Integer> genres, String lastSnapshotId) {
-        this.playlistId = playlistId;
-        this.songs = songs;
+    @ElementCollection
+    @CollectionTable(name = "playlist_songs", joinColumns = @JoinColumn(name = "playlist_id"))
+    private Collection<Song> songs = new HashSet<>();
+
+    public Playlist() {
+    }
+
+    public Playlist(String id, String snapshot, Collection<String> blockedGenres, Map<String, Integer> genres, Collection<Song> songs) {
+        this.id = id;
+        this.snapshot = snapshot;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
-        this.lastSnapshotId = lastSnapshotId;
-    }
-
-    public Playlist() {}
-
-    public String getPlaylistId() {
-        return playlistId;
-    }
-
-    public void setPlaylistId(String playlistId) {
-        this.playlistId = playlistId;
-    }
-
-    public Set<Song> getSongs() {
-        return songs;
-    }
-
-    public void setSongs(Set<Song> songs) {
         this.songs = songs;
     }
 
-    public Set<String> getBlockedGenres() {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(String snapshot) {
+        this.snapshot = snapshot;
+    }
+
+    public Collection<String> getBlockedGenres() {
         return blockedGenres;
     }
 
-    public void setBlockedGenres(Set<String> blockedGenres) {
+    public void setBlockedGenres(Collection<String> blockedGenres) {
         this.blockedGenres = blockedGenres;
     }
 
@@ -73,22 +72,22 @@ public class Playlist {
         this.genres = genres;
     }
 
-    public String getLastSnapshotId() {
-        return lastSnapshotId;
+    public Collection<Song> getSongs() {
+        return songs;
     }
 
-    public void setLastSnapshotId(String lastSnapshotId) {
-        this.lastSnapshotId = lastSnapshotId;
+    public void setSongs(Collection<Song> songs) {
+        this.songs = songs;
     }
 
     public Integer getVotesQuantity(){
         Integer votesQuantity = 0;
         for(Map.Entry<String, Integer> entry: genres.entrySet()){
-           if(entry.getValue() != 0){
-               votesQuantity++;
-           }
-       }
-       return votesQuantity;
+            if(entry.getValue() != 0){
+                votesQuantity++;
+            }
+        }
+        return votesQuantity;
     }
 
     public void addSong(Song song){
@@ -138,6 +137,4 @@ public class Playlist {
             this.genres.put(genre, 1);
         }
     }
-
-
 }

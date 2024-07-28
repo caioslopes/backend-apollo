@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.infra.repository;
 
-import br.com.apollomusic.app.domain.entities.Owner;
+import br.com.apollomusic.app.domain.Owner.Owner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
