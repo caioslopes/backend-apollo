@@ -2,7 +2,7 @@ package br.com.apollomusic.app.infra;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
-import br.com.apollomusic.app.domain.Establishment.Role;
+import br.com.apollomusic.app.domain.Role;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import br.com.apollomusic.app.infra.repository.RoleRepository;
@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+
 @Component
 public class InitialDataLoader implements CommandLineRunner {
 
@@ -39,7 +40,7 @@ public class InitialDataLoader implements CommandLineRunner {
             owner.setEmail("zinho@gmail.com");
             owner.setName("Zinho o Dono");
             owner.setPassword(passwordEncoder.encode("123"));
-//            owner.setRoles(Set.of(roleAdmin));
+            owner.setRoles(Set.of(roleAdmin));
 
             ownerRepository.save(owner);
 
@@ -53,7 +54,7 @@ public class InitialDataLoader implements CommandLineRunner {
             Owner owner2 = new Owner();
             owner2.setEmail("adm@gmail.com");
             owner2.setPassword(passwordEncoder.encode("adm"));
-//            owner2.setRoles(Set.of(roleAdmin));
+            owner2.setRoles(Set.of(roleAdmin));
 
             ownerRepository.save(owner2);
 

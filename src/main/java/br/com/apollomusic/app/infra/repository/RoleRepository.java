@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.infra.repository;
 
-import br.com.apollomusic.app.domain.Establishment.Role;
+import br.com.apollomusic.app.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

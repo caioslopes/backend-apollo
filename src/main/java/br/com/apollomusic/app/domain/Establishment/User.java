@@ -8,6 +8,7 @@ import java.util.Collection;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String username;
@@ -24,10 +25,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, Collection<String> genres) {
+    public User(Long id, String username, Collection<String> genres, Establishment establishment) {
         this.id = id;
         this.username = username;
         this.genres = genres;
+        this.establishment = establishment;
     }
 
     public Long getId() {
@@ -40,5 +42,9 @@ public class User {
 
     public Collection<String> getGenres() {
         return genres;
+    }
+
+    public Establishment getEstablishment() {
+        return establishment;
     }
 }

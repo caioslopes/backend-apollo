@@ -1,7 +1,6 @@
 package br.com.apollomusic.app.infra.config;
 
 import br.com.apollomusic.app.domain.Owner.Owner;
-import br.com.apollomusic.app.domain.Establishment.Role;
 import br.com.apollomusic.app.domain.Establishment.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +16,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {

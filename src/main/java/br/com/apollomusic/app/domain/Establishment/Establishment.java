@@ -10,6 +10,7 @@ import java.util.HashSet;
 public class Establishment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String deviceId;

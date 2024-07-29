@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.Owner.services;
+package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.response.OwnerResponse;

@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.Establishment.services;
+package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
@@ -6,10 +6,10 @@ import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
+import br.com.apollomusic.app.domain.payload.response.ChangePlaylistResponse;
 import br.com.apollomusic.app.domain.payload.response.CreatePlaylistResponse;
 import br.com.apollomusic.app.domain.payload.response.DeviceResponse;
 import br.com.apollomusic.app.domain.payload.response.UserReponse;
-import br.com.apollomusic.app.domain.services.ThirdPartyService;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +60,9 @@ public class EstablishmentService {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Erro ao desligar Estabelicimento");
     }
 
-    public ResponseEntity<?> createPlaylist(long establishmentId, String ownerEmail){
+    public ResponseEntity<?> createPlaylist(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Owner owner = ownerRepository.findByEmail(ownerEmail).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Owner owner = establishment.getOwner();
 
         CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", owner.getAccessToken());
 
@@ -83,10 +83,10 @@ public class EstablishmentService {
             playlist.addSong(s);
         }
 
+        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.addSongsToPlaylist(playlist.getId(), songs, owner.getAccessToken());
+        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
-
-        thirdPartyService.addSongsToPlaylist(playlist.getId(), songs, owner.getAccessToken());
     }
 
     public void removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
@@ -98,10 +98,10 @@ public class EstablishmentService {
             playlist.removeSong(s);
         }
 
+        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.removeSongsFromPlaylist(playlist.getId(), playlist.getSnapshot(), songs, owner.getAccessToken());
+        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
-
-        thirdPartyService.removeSongsFromPlaylist(playlist.getId(), playlist.getSnapshot(), songs, owner.getAccessToken());
     }
 
     public ResponseEntity<?> addBlockGenres(long establishmentId, Set<String> genres){

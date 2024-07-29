@@ -3,7 +3,7 @@ package br.com.apollomusic.app.presentation;
 import br.com.apollomusic.app.domain.payload.request.ManipulateGenreRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.infra.config.JwtUtil;
-import br.com.apollomusic.app.domain.Establishment.services.EstablishmentService;
+import br.com.apollomusic.app.domain.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,8 +50,7 @@ public class EstablishmentController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> createPlaylist(Authentication authentication){
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
-        String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
-        return establishmentService.createPlaylist(establishmentId, ownerEmail);
+        return establishmentService.createPlaylist(establishmentId);
     }
 
     @PostMapping("/playlist/genres/block")

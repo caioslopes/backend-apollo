@@ -1,7 +1,6 @@
 package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
-import br.com.apollomusic.app.domain.Establishment.services.EstablishmentService;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
 import br.com.apollomusic.app.domain.Establishment.Song;

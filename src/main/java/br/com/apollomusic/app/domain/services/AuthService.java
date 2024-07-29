@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+
 @Service
 public class AuthService {
 
@@ -35,7 +37,7 @@ public class AuthService {
 
         Owner owner = ownerRepository.findByEmail(loginOwnerRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(!owner.getEstablishment().equals(establishment)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!(Objects.equals(owner.getEstablishment().getId(), establishment.getId()))) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if(!passwordEncoder.matches(loginOwnerRequest.password(), owner.getPassword())) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
