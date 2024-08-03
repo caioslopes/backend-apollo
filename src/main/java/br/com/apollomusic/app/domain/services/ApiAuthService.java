@@ -29,7 +29,7 @@ public class ApiAuthService {
         this.ownerRepository = ownerRepository;
     }
 
-    public ResponseEntity<ThirdPartyAccessResponse> getAccessTokenFromApi(AuthorizeThirdPartyRequest authorizeThirdPartyRequest, String email) {
+    public ResponseEntity<?> getAccessTokenFromApi(AuthorizeThirdPartyRequest authorizeThirdPartyRequest, String email) {
         thirdPartyAccessRequest.setCode(authorizeThirdPartyRequest.code());
 
         MultiValueMap<String, String> paramsApi = new LinkedMultiValueMap<>();
@@ -56,9 +56,8 @@ public class ApiAuthService {
             ownerRepository.save(owner);
         }
 
-        return responseEntity;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     public void renewAccessToken(Owner ownerInfo) {
 

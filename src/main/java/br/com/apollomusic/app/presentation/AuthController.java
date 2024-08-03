@@ -30,7 +30,6 @@ public class AuthController {
     }
 
     @PostMapping("/api")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> authApi(Authentication authentication, @RequestBody AuthorizeThirdPartyRequest authorizeThirdPartyRequest) {
         String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
         return apiAuthService.getAccessTokenFromApi(authorizeThirdPartyRequest, ownerEmail);

@@ -56,7 +56,7 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/user").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/establishment/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/owner").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2

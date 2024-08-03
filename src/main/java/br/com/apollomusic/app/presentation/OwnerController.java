@@ -20,8 +20,7 @@ public class OwnerController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping()
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @GetMapping("")
     public ResponseEntity<?> getOwner(Authentication authentication) {
         String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
         return ownerService.getOwnerByEmail(ownerEmail);

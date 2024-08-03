@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ThirdPartyAccessRequest {
 
-    private String grant_type;
+    private final String grant_type;
     private String code;
 
     @Value("${api.redirect.uri}")

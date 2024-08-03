@@ -98,18 +98,15 @@ public class Establishment {
     }
 
     public User getUser(Long id){
-        //TO-DO
-        return null;
+        return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
     }
 
-    public User addUser(User user){
-        //TO-DO
-        return null;
+    public void addUser(User user){
+        this.users.add(user);
     }
 
-    public User removeUser(Long id){
-        //TO-DO
-        return null;
+    public void removeUser(Long id){
+        this.users.removeIf(user -> user.getId().equals(id));
     }
 
 }

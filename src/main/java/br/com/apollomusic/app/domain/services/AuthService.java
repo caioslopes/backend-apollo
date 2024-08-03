@@ -43,7 +43,7 @@ public class AuthService {
 
         String token = jwtUtil.createTokenOwner(owner);
 
-        return new ResponseEntity<>(new LoginOwnerResponse(owner.getEmail(), token), HttpStatus.OK);
+        return new ResponseEntity<>(new LoginOwnerResponse(token), HttpStatus.OK);
     }
 
     private Establishment findEstablishment(Long establishmentId) {

@@ -21,6 +21,7 @@ public class Owner {
 
     private String password;
 
+    @Column(length = 512)
     private String accessToken;
 
     private int tokenExpiresIn;
@@ -36,6 +37,7 @@ public class Owner {
             joinColumns = @JoinColumn(name = "owner_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+
     private Set<Role> roles = new HashSet<>();
 
     public Owner() {
