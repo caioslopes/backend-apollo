@@ -64,11 +64,8 @@ public class EstablishmentService {
 
     public ResponseEntity<?> createPlaylist(long establishmentId, String email){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
-//        Owner owner = ownerRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
-
         CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", establishment.getOwner().getAccessToken());
-
-        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), new HashSet<>(), new HashMap<>(), new HashSet<>());
+        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), establishment, new HashSet<>(), new HashMap<>(), new HashSet<>());
 
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);

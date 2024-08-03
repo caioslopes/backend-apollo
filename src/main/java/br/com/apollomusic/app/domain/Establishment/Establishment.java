@@ -23,8 +23,7 @@ public class Establishment {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "playlist_id")
+    @OneToOne(mappedBy = "establishment", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Playlist playlist;
 
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

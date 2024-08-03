@@ -24,7 +24,7 @@ public class Owner {
     @Column(length = 512)
     private String accessToken;
 
-    private int tokenExpiresIn;
+    private Long tokenExpiresIn;
 
     private String refreshToken;
 
@@ -43,7 +43,7 @@ public class Owner {
     public Owner() {
     }
 
-    public Owner(Long id, String name, String password, String accessToken, int tokenExpiresIn, String refreshToken, Establishment establishment, Set<Role> roles) {
+    public Owner(Long id, String name, String password, String accessToken, Long tokenExpiresIn, String refreshToken, Establishment establishment, Set<Role> roles) {
         this.id = id;
         this.name = name;
         this.password = password;
@@ -94,11 +94,11 @@ public class Owner {
         this.accessToken = accessToken;
     }
 
-    public int getTokenExpiresIn() {
+    public Long getTokenExpiresIn() {
         return tokenExpiresIn;
     }
 
-    public void setTokenExpiresIn(int tokenExpiresIn) {
+    public void setTokenExpiresIn(Long tokenExpiresIn) {
         this.tokenExpiresIn = tokenExpiresIn;
     }
 

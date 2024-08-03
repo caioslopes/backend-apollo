@@ -52,7 +52,7 @@ public class ApiAuthService {
         if (responseEntity.getBody() != null) {
             owner.setRefreshToken(responseEntity.getBody().refresh_token());
             owner.setAccessToken(responseEntity.getBody().access_token());
-            owner.setTokenExpiresIn(responseEntity.getBody().expires_in());
+            owner.setTokenExpiresIn(System.currentTimeMillis() + responseEntity.getBody().expires_in() * 1000);
             ownerRepository.save(owner);
         }
 
@@ -78,12 +78,12 @@ public class ApiAuthService {
         if (responseEntity.getBody() != null) {
             owner.setRefreshToken(responseEntity.getBody().refresh_token());
             owner.setAccessToken(responseEntity.getBody().access_token());
-            owner.setTokenExpiresIn(responseEntity.getBody().expires_in());
+            owner.setTokenExpiresIn(System.currentTimeMillis() + responseEntity.getBody().expires_in() * 1000);
             ownerRepository.save(owner);
         }
     }
 
-    public boolean isTokenExpired(int expiresIn) {
+    public boolean isTokenExpired(Long expiresIn) {
         return System.currentTimeMillis() > expiresIn;
     }
 }

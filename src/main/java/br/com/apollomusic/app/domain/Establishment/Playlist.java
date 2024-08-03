@@ -14,6 +14,10 @@ public class Playlist {
 
     private String snapshot;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "establishment_id")
+    private Establishment establishment;
+
     @ElementCollection
     @CollectionTable(name = "blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @Column(name = "genre")
@@ -32,9 +36,11 @@ public class Playlist {
     public Playlist() {
     }
 
-    public Playlist(String id, String snapshot, Collection<String> blockedGenres, Map<String, Integer> genres, Collection<Song> songs) {
+
+    public Playlist(String id, String snapshot, Establishment establishment, Collection<String> blockedGenres, Map<String, Integer> genres, Collection<Song> songs) {
         this.id = id;
         this.snapshot = snapshot;
+        this.establishment = establishment;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
         this.songs = songs;
@@ -54,6 +60,14 @@ public class Playlist {
 
     public void setSnapshot(String snapshot) {
         this.snapshot = snapshot;
+    }
+
+    public Establishment getEstablishment() {
+        return establishment;
+    }
+
+    public void setEstablishment(Establishment establishment) {
+        this.establishment = establishment;
     }
 
     public Collection<String> getBlockedGenres() {
