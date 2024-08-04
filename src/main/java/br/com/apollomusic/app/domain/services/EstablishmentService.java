@@ -47,7 +47,15 @@ public class EstablishmentService {
             if (establishment.getPlaylist().getVotesQuantity() > 0){
                 establishment.setOff(false);
                 algorithmService.runAlgorithm(establishment);
+
                 establishmentRepository.save(establishment);
+
+                thirdPartyService.setRepeatMode("context", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
+
+                thirdPartyService.setShuffleMode("true", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
+
+                thirdPartyService.startResumePlayback(establishment.getPlaylist().getUri(), "", establishment.getOwner().getAccessToken());
+
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }

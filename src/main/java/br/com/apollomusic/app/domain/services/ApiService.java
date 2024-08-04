@@ -46,15 +46,17 @@ public class ApiService {
         }
     }
 
-    public <T> String put(String endpoint, T requestBody, String accessToken) {
+    public <T> String put(String endpoint, Map<String, String> queryParams, T requestBody, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(accessToken);
 
+        String url = mappingQueryParameters(endpoint, queryParams);
+
         HttpEntity<T> request = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<String> responseEntity = restTemplate.exchange((baseUrl + endpoint), HttpMethod.PUT, request, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
             return responseEntity.getBody();
         } catch (Exception e) {
             return "Error in put";

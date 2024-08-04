@@ -94,6 +94,10 @@ public class Playlist {
         this.songs = songs;
     }
 
+    public String getUri(){
+        return "spotify:playlist:" + id;
+    }
+
     public Integer getVotesQuantity(){
         Integer votesQuantity = 0;
         for(Map.Entry<String, Integer> entry: genres.entrySet()){

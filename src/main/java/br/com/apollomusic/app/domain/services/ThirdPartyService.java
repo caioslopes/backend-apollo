@@ -5,6 +5,7 @@ import br.com.apollomusic.app.domain.payload.ObjectUri;
 import br.com.apollomusic.app.domain.payload.request.AddSongsToPlaylistRequest;
 import br.com.apollomusic.app.domain.payload.request.CreatePlaylistRequest;
 import br.com.apollomusic.app.domain.payload.request.RemoveSongsFromPlaylistRequest;
+import br.com.apollomusic.app.domain.payload.request.StartResumePlaybackRequest;
 import br.com.apollomusic.app.domain.payload.response.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,6 +41,35 @@ public class ThirdPartyService {
     public AvailableGenresResponse getAvailableGenres(String spotifyAccessToken){
         String response = apiService.get("/recommendations/available-genre-seeds", new HashMap<>(), spotifyAccessToken);
         return gson.fromJson(response, AvailableGenresResponse.class);
+    }
+
+    public void startResumePlayback(String contextUri, String deviceId, String spotifyAccessToken){
+        String endpoint = "/me/player/play";
+        StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, null, 0);
+        apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
+    }
+
+    public void setRepeatMode(String state, String deviceId, String spotifyAccessToken){
+        String endpoint = "/me/player/repeat";
+        Map<String, String> params = new HashMap<>();
+        params.put("state", state);
+        params.put("device_id", deviceId);
+        apiService.put(endpoint, params, null, spotifyAccessToken);
+    }
+
+    public void setShuffleMode(String state, String deviceId, String spotifyAccessToken){
+        String endpoint = "/me/player/shuffle";
+        Map<String, String> params = new HashMap<>();
+        params.put("state", state);
+        params.put("device_id", deviceId);
+        apiService.put(endpoint, params, null, spotifyAccessToken);
+    }
+
+    public void pausePlayback(String deviceId, String spotifyAccessToken){
+        String endpoint = "/me/player/pause";
+        Map<String, String> params = new HashMap<>();
+        params.put("device_id", deviceId);
+        apiService.put(endpoint, params,null, spotifyAccessToken);
     }
 
     public CreatePlaylistResponse createPlaylist(String name, String description, String spotifyAccessToken){
