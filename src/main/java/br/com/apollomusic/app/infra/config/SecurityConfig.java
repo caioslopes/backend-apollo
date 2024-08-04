@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.infra.config;
 
-import br.com.apollomusic.app.model.services.CustomUserDetailsService;
+import br.com.apollomusic.app.domain.services.CustomUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -58,7 +58,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/owner").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/establishment/{id}").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder())))
