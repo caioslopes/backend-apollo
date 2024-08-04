@@ -21,7 +21,7 @@ public class EstablishmentController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<?> getEstablishment(Authentication authentication) {
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
         return establishmentService.getEstablishment(establishmentId);
