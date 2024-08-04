@@ -2,13 +2,9 @@ package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
-import br.com.apollomusic.app.domain.Establishment.Song;
-import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
-import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.domain.payload.response.*;
-import br.com.apollomusic.app.infra.config.JwtUtil;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +20,13 @@ public class EstablishmentService {
 
     private final EstablishmentRepository establishmentRepository;
     private final OwnerRepository ownerRepository;
-    private final JwtUtil jwtUtil;
     private final ThirdPartyService thirdPartyService;
     private final AlgorithmService algorithmService;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, JwtUtil jwtUtil, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
         this.establishmentRepository = establishmentRepository;
         this.ownerRepository = ownerRepository;
-        this.jwtUtil = jwtUtil;
         this.thirdPartyService = thirdPartyService;
         this.algorithmService = algorithmService;
     }
@@ -68,6 +62,14 @@ public class EstablishmentService {
         if (establishment.isOff()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         establishment.setOff(true);
+
+        AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
+
+        Map<String, Integer> genres = new HashMap<>();
+        availableGenresResponse.genres().forEach(genre -> genres.put(genre, 0));
+
+        establishment.getPlaylist().setGenres(genres);
+
         establishmentRepository.save(establishment);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -88,36 +90,6 @@ public class EstablishmentService {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
-//    public void addSongsToPlaylist(long establishmentId, Set<Song> songs){
-//        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//        Owner owner = establishment.getOwner();
-//        Playlist playlist = establishment.getPlaylist();
-//
-//        for (Song s : songs){
-//            playlist.addSong(s);
-//        }
-//
-//        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.addSongsToPlaylist(playlist.getUri(), songs, owner.getAccessToken());
-//        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
-//        establishment.setPlaylist(playlist);
-//        establishmentRepository.save(establishment);
-//    }
-
-//    public void removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
-//        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//        Owner owner = establishment.getOwner();
-//        Playlist playlist = establishment.getPlaylist();
-//
-//        for (Song s : songs){
-//            playlist.removeSong(s);
-//        }
-//
-//        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.removeSongsFromPlaylist(playlist.getUri(), playlist.getSnapshot(), songs, owner.getAccessToken());
-//        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
-//        establishment.setPlaylist(playlist);
-//        establishmentRepository.save(establishment);
-//    }
 
     public ResponseEntity<?> addBlockGenres(long establishmentId, Set<String> genres){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -205,43 +177,6 @@ public class EstablishmentService {
         establishment.setDeviceId(setDeviceRequest.id());
         establishmentRepository.save(establishment);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<UserReponse> getUser(long establishmentId, Long userId){
-        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        User user = establishment.getUser(userId);
-
-        if(user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        UserReponse userReponse = new UserReponse(user.getId(), user.getUsername(), user.getGenres(), establishment.getId());
-        return new ResponseEntity<>(userReponse, HttpStatus.OK);
-    }
-
-    public ResponseEntity<LoginUserResponse> addUser(LoginUserRequest loginUserRequest){
-        Establishment establishment = establishmentRepository.findById(loginUserRequest.establishmentId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        User user = new User(loginUserRequest.username(), loginUserRequest.genres(), establishment);
-
-        if(establishment.isOff()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-
-        establishment.addUser(user);
-        establishmentRepository.save(establishment);
-
-        String accessToken = jwtUtil.createTokenUser(user);
-
-        return new ResponseEntity<>(new LoginUserResponse(accessToken), HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<?> removeUser(long establishmentId, Long userId){
-        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        User user = establishment.getUser(userId);
-
-        if(user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        establishment.removeUser(user.getId());
-        establishmentRepository.save(establishment);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

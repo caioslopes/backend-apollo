@@ -3,6 +3,8 @@ package br.com.apollomusic.app.domain.services;
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.LoginOwnerRequest;
+import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
+import br.com.apollomusic.app.domain.payload.request.LogoutUserRequest;
 import br.com.apollomusic.app.domain.payload.response.LoginOwnerResponse;
 import br.com.apollomusic.app.infra.config.JwtUtil;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
@@ -15,21 +17,44 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class AuthService {
 
     private final EstablishmentRepository establishmentRepository;
+    private final EstablishmentService establishmentService;
     private final JwtUtil jwtUtil;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthService(EstablishmentRepository establishmentRepository, JwtUtil jwtUtil, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(EstablishmentRepository establishmentRepository, EstablishmentService establishmentService, JwtUtil jwtUtil, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
         this.establishmentRepository = establishmentRepository;
+        this.establishmentService = establishmentService;
         this.jwtUtil = jwtUtil;
         this.ownerRepository = ownerRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public ResponseEntity<?> loginUser(LoginUserRequest loginUserRequest) {
+        Establishment establishment = findEstablishment(loginUserRequest.establishmentId());
+
+        if(establishment.isOff()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
+        establishmentService.incrementVoteGenres(establishment.getId(), loginUserRequest.genres());
+
+        String accessToken = jwtUtil.createTokenUser(loginUserRequest);
+
+        return new ResponseEntity<>(new LoginOwnerResponse(accessToken), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<?> logoutUser(LogoutUserRequest logoutUserRequest) {
+        Establishment establishment = findEstablishment(logoutUserRequest.establishmentId());
+
+        establishmentService.decrementVoteGenres(establishment.getId(), logoutUserRequest.genres());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<LoginOwnerResponse> loginOwner(LoginOwnerRequest loginOwnerRequest) {

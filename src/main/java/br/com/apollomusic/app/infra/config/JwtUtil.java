@@ -1,7 +1,7 @@
 package br.com.apollomusic.app.infra.config;
 
 import br.com.apollomusic.app.domain.Owner.Owner;
-import br.com.apollomusic.app.domain.Establishment.User;
+import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,10 +28,11 @@ public class JwtUtil {
 
     private static final long accessTokenValidity = 60;
 
-    public String createTokenUser(User user) {
+    public String createTokenUser(LoginUserRequest loginUserRequest) {
         Claims claims = Jwts.claims();
-        claims.put("userId", user.getId());
-        claims.put("establishmentId", user.getEstablishment().getId());
+        claims.setSubject(loginUserRequest.username());
+        claims.put("genres", loginUserRequest.genres());
+        claims.put("establishmentId", loginUserRequest.establishmentId());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 2));
         return Jwts.builder()

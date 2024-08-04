@@ -1,4 +1,6 @@
 package br.com.apollomusic.app.domain.payload.request;
 
-public record LogoutUserRequest(Long userId, Long establishmentId) {
+import java.util.Set;
+
+public record LogoutUserRequest(String username, Set<String> genres, Long establishmentId) {
 }

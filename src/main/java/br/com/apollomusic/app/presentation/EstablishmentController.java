@@ -89,23 +89,4 @@ public class EstablishmentController {
         return establishmentService.setMainDevice(establishmentId, setDeviceRequest);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<?> getUser(Authentication authentication) {
-        Long userID = jwtUtil.extractItemFromToken(authentication, "userId");
-        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
-        return establishmentService.getUser(establishmentId, userID);
-    }
-
-    @PostMapping("/user")
-    public ResponseEntity<?> addUser(@RequestBody LoginUserRequest loginUserRequest){
-        return establishmentService.addUser(loginUserRequest);
-    }
-
-    @DeleteMapping("/user")
-    public ResponseEntity<?> removeUser(Authentication authentication){
-        Long userID = jwtUtil.extractItemFromToken(authentication, "userId");
-        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
-        return establishmentService.removeUser(establishmentId, userID);
-    }
-
 }

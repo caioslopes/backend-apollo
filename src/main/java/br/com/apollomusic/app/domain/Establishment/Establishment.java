@@ -3,9 +3,6 @@ package br.com.apollomusic.app.domain.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import jakarta.persistence.*;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 @Entity
 public class Establishment {
 
@@ -26,18 +23,14 @@ public class Establishment {
     @OneToOne(mappedBy = "establishment", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Playlist playlist;
 
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Collection<User> users = new HashSet<>();
-
     public Establishment() {
     }
 
-    public Establishment(Long id, String deviceId, boolean isOff, String name, Collection<User> users) {
+    public Establishment(Long id, String deviceId, boolean isOff, String name) {
         this.id = id;
         this.deviceId = deviceId;
         this.isOff = isOff;
         this.name = name;
-        this.users = users;
     }
 
     public Long getId() {
@@ -86,26 +79,6 @@ public class Establishment {
 
     public void setPlaylist(Playlist playlist) {
         this.playlist = playlist;
-    }
-
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<User> users) {
-        this.users = users;
-    }
-
-    public User getUser(Long id){
-        return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public void addUser(User user){
-        this.users.add(user);
-    }
-
-    public void removeUser(Long id){
-        this.users.removeIf(user -> user.getId().equals(id));
     }
 
 }
