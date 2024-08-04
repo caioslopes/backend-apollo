@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain;
+package br.com.apollomusic.app.domain.Owner;
 
 import jakarta.persistence.*;
 

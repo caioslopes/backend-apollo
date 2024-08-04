@@ -26,13 +26,15 @@ public class EstablishmentService {
     private final OwnerRepository ownerRepository;
     private final JwtUtil jwtUtil;
     private final ThirdPartyService thirdPartyService;
+    private final AlgorithmService algorithmService;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, JwtUtil jwtUtil, ThirdPartyService thirdPartyService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, JwtUtil jwtUtil, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
         this.establishmentRepository = establishmentRepository;
         this.ownerRepository = ownerRepository;
         this.jwtUtil = jwtUtil;
         this.thirdPartyService = thirdPartyService;
+        this.algorithmService = algorithmService;
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -44,6 +46,7 @@ public class EstablishmentService {
 
             if (establishment.getPlaylist().getVotesQuantity() > 0){
                 establishment.setOff(false);
+                algorithmService.runAlgorithm(establishment);
                 establishmentRepository.save(establishment);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -65,7 +68,12 @@ public class EstablishmentService {
     public ResponseEntity<?> createPlaylist(long establishmentId, String email){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
         CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", establishment.getOwner().getAccessToken());
-        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), establishment, new HashSet<>(), new HashMap<>(), new HashSet<>());
+        AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
+
+        Map<String, Integer> genres = new HashMap<>();
+        availableGenresResponse.genres().forEach(genre -> genres.put(genre, 0));
+
+        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), establishment, new HashSet<>(), genres, new HashSet<>());
 
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
@@ -73,35 +81,35 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    public void addSongsToPlaylist(long establishmentId, Set<Song> songs){
-        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Owner owner = establishment.getOwner();
-        Playlist playlist = establishment.getPlaylist();
+//    public void addSongsToPlaylist(long establishmentId, Set<Song> songs){
+//        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        Owner owner = establishment.getOwner();
+//        Playlist playlist = establishment.getPlaylist();
+//
+//        for (Song s : songs){
+//            playlist.addSong(s);
+//        }
+//
+//        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.addSongsToPlaylist(playlist.getUri(), songs, owner.getAccessToken());
+//        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
+//        establishment.setPlaylist(playlist);
+//        establishmentRepository.save(establishment);
+//    }
 
-        for (Song s : songs){
-            playlist.addSong(s);
-        }
-
-        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.addSongsToPlaylist(playlist.getId(), songs, owner.getAccessToken());
-        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
-        establishment.setPlaylist(playlist);
-        establishmentRepository.save(establishment);
-    }
-
-    public void removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
-        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Owner owner = establishment.getOwner();
-        Playlist playlist = establishment.getPlaylist();
-
-        for (Song s : songs){
-            playlist.removeSong(s);
-        }
-
-        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.removeSongsFromPlaylist(playlist.getId(), playlist.getSnapshot(), songs, owner.getAccessToken());
-        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
-        establishment.setPlaylist(playlist);
-        establishmentRepository.save(establishment);
-    }
+//    public void removeSongsFromPlaylist(long establishmentId, Set<Song> songs){
+//        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        Owner owner = establishment.getOwner();
+//        Playlist playlist = establishment.getPlaylist();
+//
+//        for (Song s : songs){
+//            playlist.removeSong(s);
+//        }
+//
+//        ChangePlaylistResponse changePlaylistResponse = thirdPartyService.removeSongsFromPlaylist(playlist.getUri(), playlist.getSnapshot(), songs, owner.getAccessToken());
+//        playlist.setSnapshot(changePlaylistResponse.snapshot_id());
+//        establishment.setPlaylist(playlist);
+//        establishmentRepository.save(establishment);
+//    }
 
     public ResponseEntity<?> addBlockGenres(long establishmentId, Set<String> genres){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -131,9 +139,15 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Playlist playlist = establishment.getPlaylist();
+
+        if(playlist == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
         playlist.incrementVoteGenre(genres);
 
         establishment.setPlaylist(playlist);
+
+        algorithmService.runAlgorithm(establishment);
+
         establishmentRepository.save(establishment);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -143,9 +157,15 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Playlist playlist = establishment.getPlaylist();
+
+        if(playlist == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
         playlist.decrementVoteGenre(genres);
 
         establishment.setPlaylist(playlist);
+
+        algorithmService.runAlgorithm(establishment);
+
         establishmentRepository.save(establishment);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

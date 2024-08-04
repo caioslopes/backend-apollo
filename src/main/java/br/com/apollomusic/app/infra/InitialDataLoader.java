@@ -2,7 +2,7 @@ package br.com.apollomusic.app.infra;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
-import br.com.apollomusic.app.domain.Role;
+import br.com.apollomusic.app.domain.Owner.Role;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import br.com.apollomusic.app.infra.repository.RoleRepository;

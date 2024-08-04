@@ -109,7 +109,9 @@ public class Playlist {
     }
 
     public void removeSong(Song song){
-        songs.removeIf(s -> s.getUri().equals(song.getUri()));
+        if(song != null){
+            this.songs.remove(song);
+        }
     }
 
     public void addBlockGenres(Set<String> blockedGenres){
@@ -148,7 +150,7 @@ public class Playlist {
 
     private void addGenres(Set<String> genres){
         for(String genre : genres){
-            this.genres.put(genre, 1);
+            this.genres.put(genre, 0);
         }
     }
 }

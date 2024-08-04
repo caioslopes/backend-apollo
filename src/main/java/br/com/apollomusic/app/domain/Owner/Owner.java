@@ -1,7 +1,6 @@
 package br.com.apollomusic.app.domain.Owner;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
-import br.com.apollomusic.app.domain.Role;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

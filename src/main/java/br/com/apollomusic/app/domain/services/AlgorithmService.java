@@ -4,7 +4,9 @@ import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
 import br.com.apollomusic.app.domain.Establishment.Song;
+import br.com.apollomusic.app.domain.payload.response.ChangePlaylistResponse;
 import br.com.apollomusic.app.domain.payload.response.RecommendationsResponse;
+import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,14 @@ import java.util.*;
 public class AlgorithmService {
 
     private final ApiService apiService;
-    private final EstablishmentService establishmentService;
     private final Gson gson;
+    private final ThirdPartyService thirdPartyService;
 
     @Autowired
-    public AlgorithmService(ApiService apiService, EstablishmentService establishmentService, Gson gson) {
+    public AlgorithmService(ApiService apiService, Gson gson, ThirdPartyService thirdPartyService) {
         this.apiService = apiService;
-        this.establishmentService = establishmentService;
         this.gson = gson;
+        this.thirdPartyService = thirdPartyService;
     }
 
     public void runAlgorithm(Establishment establishment){
@@ -30,7 +32,7 @@ public class AlgorithmService {
         Playlist playlist = establishment.getPlaylist();
 
         HashMap<String, Integer> songsQuantityPerGenre = getSongsQuantityPerGenre(playlist);
-        Set<Song> songsInPlaylist = (Set<Song>) playlist.getSongs();
+        Collection<Song> songsInPlaylist = playlist.getSongs();
 
         int songsQuantity;
         Set<Song> songs;
@@ -41,16 +43,30 @@ public class AlgorithmService {
             if(songsQuantity != item.getValue()){
                 if(songsQuantity < item.getValue()){
                     songs = getRecommendations(item.getValue() - songsQuantity, item.getKey(), owner.getAccessToken());
-                    establishmentService.addSongsToPlaylist(establishment.getId(), songs);
+
+                    for (Song s : songs){
+                        playlist.addSong(s);
+                    }
+
+                    ChangePlaylistResponse changePlaylistResponse = thirdPartyService.addSongsToPlaylist(playlist.getId(), songs, owner.getAccessToken());
+                    playlist.setSnapshot(changePlaylistResponse.snapshot_id());
+                    establishment.setPlaylist(playlist);
                 }else{
                     songs = getRandomSongsInPlaylistByGenre(songsQuantity - item.getValue(), item.getKey(), songsInPlaylist);
-                    establishmentService.removeSongsFromPlaylist(establishment.getId(), songs);
+
+                    for (Song s : songs){
+                        playlist.removeSong(s);
+                    }
+
+                    ChangePlaylistResponse changePlaylistResponse = thirdPartyService.removeSongsFromPlaylist(playlist.getId(), playlist.getSnapshot(), songs, owner.getAccessToken());
+                    playlist.setSnapshot(changePlaylistResponse.snapshot_id());
+                    establishment.setPlaylist(playlist);
                 }
             }
         }
     }
 
-    private int getQuantityOfSongInPlaylistByGenre(String genre, Set<Song> songs){
+    private int getQuantityOfSongInPlaylistByGenre(String genre, Collection<Song> songs){
         int quantity = 0;
 
         for(Song s : songs){
@@ -82,7 +98,7 @@ public class AlgorithmService {
         return songs;
     }
 
-    private Set<Song> getRandomSongsInPlaylistByGenre(Integer quantity, String genre, Set<Song> playlist){
+    private Set<Song> getRandomSongsInPlaylistByGenre(Integer quantity, String genre, Collection<Song> playlist){
         Set<Song> result = new HashSet<>();
         List<Song> songsInPlaylistOfGenre = new ArrayList<>();
         Random random = new Random();
