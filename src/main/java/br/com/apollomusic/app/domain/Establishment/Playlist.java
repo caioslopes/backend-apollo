@@ -18,18 +18,18 @@ public class Playlist {
     @JoinColumn(name = "establishment_id")
     private Establishment establishment;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @Column(name = "genre")
     private Collection<String> blockedGenres = new HashSet<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @MapKeyColumn(name = "genre")
     @Column(name = "votes")
     private Map<String, Integer> genres = new HashMap<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "playlist_songs", joinColumns = @JoinColumn(name = "playlist_id"))
     private Collection<Song> songs = new HashSet<>();
 
