@@ -18,7 +18,7 @@ public class UserCleanupScheduler {
         this.establishmentService = establishmentService;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 3600000)
     @Transactional
     public void cleanupExpiredUsers() {
         Iterable<Establishment> establishments = establishmentRepository.findAll();
