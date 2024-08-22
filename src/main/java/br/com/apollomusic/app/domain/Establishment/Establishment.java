@@ -100,7 +100,7 @@ public class Establishment {
     }
 
     public void addUser(User user) {
-        user.setExpiresIn(System.currentTimeMillis() + 7200 * 1000);
+        user.setExpiresIn(System.currentTimeMillis() + 5 * 60 * 1000);
         users.add(user);
     }
 }

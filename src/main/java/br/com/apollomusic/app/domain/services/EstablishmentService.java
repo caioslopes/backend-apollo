@@ -2,6 +2,7 @@ package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
+import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.domain.payload.response.*;
@@ -22,13 +23,15 @@ public class EstablishmentService {
     private final OwnerRepository ownerRepository;
     private final ThirdPartyService thirdPartyService;
     private final AlgorithmService algorithmService;
+    private final ApiAuthService apiAuthService;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService, ApiAuthService apiAuthService) {
         this.establishmentRepository = establishmentRepository;
         this.ownerRepository = ownerRepository;
         this.thirdPartyService = thirdPartyService;
         this.algorithmService = algorithmService;
+        this.apiAuthService = apiAuthService;
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -178,5 +181,27 @@ public class EstablishmentService {
         establishmentRepository.save(establishment);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    public void removeUsers(Long establishmentId) {
+        Establishment establishment = establishmentRepository.findById(establishmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        long currentTime = System.currentTimeMillis();
+        List<User> usersCopy = new ArrayList<>(establishment.getUser());
+        List<User> remainingUsers = new ArrayList<>();
+
+        for (User user : usersCopy) {
+            if (user.getExpiresIn() <= currentTime) {
+                Set<String> userGenres = new HashSet<>(Arrays.asList(user.getGenres().split(",")));
+                decrementVoteGenres(establishment.getId(), userGenres);
+            } else {
+                remainingUsers.add(user);
+            }
+        }
+
+        establishment.setUser(remainingUsers);
+        establishmentRepository.save(establishment);
+    }
+
 
 }

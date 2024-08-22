@@ -31,14 +31,9 @@ public class ApiTokenInterceptor implements HandlerInterceptor {
         }
 
         if (email != null) {
-            var ownerInfo = ownerRepository.findByEmail(email).get();
-            if(ownerInfo.getRefreshToken() == null) return true;
-            if (ownerInfo.getAccessToken() == null || apiAuthService.isTokenExpired(ownerInfo.getTokenExpiresIn())) {
-                apiAuthService.renewAccessToken(ownerInfo);
-            }
+            apiAuthService.renewTokenIfNeeded(email);
         }
 
         return true;
-
     }
 }
