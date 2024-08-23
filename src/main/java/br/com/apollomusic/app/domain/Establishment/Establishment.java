@@ -91,6 +91,13 @@ public class Establishment {
         this.playlist = playlist;
     }
 
+    public boolean playlistHasInitialGenres(){
+        if(playlist != null){
+            return playlist.getVotesQuantity() > 0;
+        }
+        return false;
+    }
+
     public Collection<User> getUser() {
         return users;
     }

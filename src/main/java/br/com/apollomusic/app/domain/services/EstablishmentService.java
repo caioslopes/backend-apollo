@@ -78,7 +78,7 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> createPlaylist(long establishmentId, String email){
+    public ResponseEntity<?> createPlaylist(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
         CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", establishment.getOwner().getAccessToken());
         AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
@@ -103,7 +103,7 @@ public class EstablishmentService {
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<?> removeBlockGenres(long establishmentId, Set<String> genres){
@@ -115,7 +115,7 @@ public class EstablishmentService {
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<?> incrementVoteGenres(long establishmentId, Set<String> genres){
@@ -158,12 +158,24 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Playlist playlist = establishment.getPlaylist();
         if(playlist == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        return ResponseEntity.ok(playlist);
+
+        ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
+
+        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
+        return ResponseEntity.ok(playlistResponse);
     }
 
     public ResponseEntity<?> getEstablishment(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ResponseEntity.ok(new EstablishmentResponse(establishment.getId(), establishment.getDeviceId(), establishment.getName()));
+
+        Playlist playlist = establishment.getPlaylist();
+
+        ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
+
+        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
+        EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
+
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<?> getDevices(long establishmentId, String ownerEmail){

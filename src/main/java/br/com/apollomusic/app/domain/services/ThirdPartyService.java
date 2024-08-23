@@ -80,6 +80,12 @@ public class ThirdPartyService {
         return gson.fromJson(response, CreatePlaylistResponse.class);
     }
 
+    public ThirdPartyPlaylistResponse getPlaylist(String id, String spotifyAccessToken){
+        String endpoint = "/playlists/" + id ;
+        String response = apiService.get(endpoint, null, spotifyAccessToken);
+        return gson.fromJson(response, ThirdPartyPlaylistResponse.class);
+    }
+
     public ChangePlaylistResponse addSongsToPlaylist(String playlistId, Set<Song> songs, String spotifyAccessToken){
         String endpoint = "/playlists/" + playlistId + "/tracks";
         Set<String> uris = new HashSet<>();

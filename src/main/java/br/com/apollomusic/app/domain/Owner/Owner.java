@@ -109,6 +109,10 @@ public class Owner {
         this.refreshToken = refreshToken;
     }
 
+    public boolean hasThirdPartyAccess() {
+        return refreshToken != null && !refreshToken.isEmpty();
+    }
+
     public Establishment getEstablishment() {
         return establishment;
     }
