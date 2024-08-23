@@ -37,3 +37,5 @@ build/
 *.pub
 *.key
 */docker
+
+.pem

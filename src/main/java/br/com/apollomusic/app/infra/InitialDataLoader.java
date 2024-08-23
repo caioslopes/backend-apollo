@@ -21,7 +21,6 @@ public class InitialDataLoader implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     @Autowired
     public InitialDataLoader(OwnerRepository ownerRepository, EstablishmentRepository establishmentRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.ownerRepository = ownerRepository;
@@ -34,11 +33,10 @@ public class InitialDataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (ownerRepository.count() == 0 && establishmentRepository.count() == 0) {
             Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
-            Role roleUser = roleRepository.findByName("ROLE_USER").orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
 
             Owner owner = new Owner();
             owner.setEmail("zinho@gmail.com");
-            owner.setName("Zinho o Dono");
+            owner.setName("Joãozinho");
             owner.setPassword(passwordEncoder.encode("123"));
             owner.setRoles(Set.of(roleAdmin));
 
@@ -52,14 +50,15 @@ public class InitialDataLoader implements CommandLineRunner {
             establishmentRepository.save(establishment);
 
             Owner owner2 = new Owner();
-            owner2.setEmail("adm@gmail.com");
-            owner2.setPassword(passwordEncoder.encode("adm"));
+            owner2.setEmail("root@apollomusic.com.br");
+            owner2.setName("root");
+            owner2.setPassword(passwordEncoder.encode("root"));
             owner2.setRoles(Set.of(roleAdmin));
 
             ownerRepository.save(owner2);
 
             Establishment establishment2 = new Establishment();
-            establishment2.setName("AdmAmbient");
+            establishment2.setName("Root Establishment");
             establishment2.setOff(true);
             establishment2.setOwner(owner2);
 

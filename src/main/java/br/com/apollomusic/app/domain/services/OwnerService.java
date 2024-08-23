@@ -21,7 +21,7 @@ public class OwnerService {
 
     public ResponseEntity<OwnerResponse> getOwnerByEmail(String email){
         Owner owner = ownerRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        OwnerResponse ownerResponse = new OwnerResponse(owner.getName(), owner.getEmail(), owner.getRefreshToken());
+        OwnerResponse ownerResponse = new OwnerResponse(owner.getName(), owner.getEmail(), owner.hasThirdPartyAccess());
         return new ResponseEntity<>(ownerResponse, HttpStatus.OK);
     }
 
