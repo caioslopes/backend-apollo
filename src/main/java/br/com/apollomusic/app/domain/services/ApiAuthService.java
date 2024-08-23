@@ -1,11 +1,10 @@
 package br.com.apollomusic.app.domain.services;
 
-
+import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.AuthorizeThirdPartyRequest;
 import br.com.apollomusic.app.domain.payload.request.ThirdPartyAccessRequest;
 import br.com.apollomusic.app.domain.payload.response.ThirdPartyAccessResponse;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
-import br.com.apollomusic.app.domain.Owner.Owner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -76,7 +75,6 @@ public class ApiAuthService {
         ResponseEntity<ThirdPartyAccessResponse> responseEntity = restTemplate.postForEntity(baseUrl, request, ThirdPartyAccessResponse.class);
 
         if (responseEntity.getBody() != null) {
-            owner.setRefreshToken(responseEntity.getBody().refresh_token());
             owner.setAccessToken(responseEntity.getBody().access_token());
             owner.setTokenExpiresIn(System.currentTimeMillis() + responseEntity.getBody().expires_in() * 1000);
             ownerRepository.save(owner);
@@ -85,5 +83,15 @@ public class ApiAuthService {
 
     public boolean isTokenExpired(Long expiresIn) {
         return System.currentTimeMillis() > expiresIn;
+    }
+
+    public void renewTokenIfNeeded(String email) {
+        Owner ownerInfo = ownerRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (ownerInfo.getRefreshToken() == null) return;
+
+        if (ownerInfo.getAccessToken() == null || isTokenExpired(ownerInfo.getTokenExpiresIn())) {
+            renewAccessToken(ownerInfo);
+        }
     }
 }

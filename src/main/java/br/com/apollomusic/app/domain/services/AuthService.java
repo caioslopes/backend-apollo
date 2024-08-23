@@ -1,6 +1,7 @@
 package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
+import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.LoginOwnerRequest;
 import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
@@ -40,14 +41,23 @@ public class AuthService {
     public ResponseEntity<?> loginUser(LoginUserRequest loginUserRequest) {
         Establishment establishment = findEstablishment(loginUserRequest.establishmentId());
 
-        if(establishment.isOff()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if (establishment.isOff()) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
 
         establishmentService.incrementVoteGenres(establishment.getId(), loginUserRequest.genres());
+
+        User user = new User();
+        user.addGenre(loginUserRequest.genres());
+
+        establishment.addUser(user);
+        establishmentRepository.save(establishment);
 
         String accessToken = jwtUtil.createTokenUser(loginUserRequest);
 
         return new ResponseEntity<>(new LoginOwnerResponse(accessToken), HttpStatus.CREATED);
     }
+
 
     public ResponseEntity<?> logoutUser(LogoutUserRequest logoutUserRequest) {
         Establishment establishment = findEstablishment(logoutUserRequest.establishmentId());
