@@ -3,6 +3,9 @@ package br.com.apollomusic.app.domain.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
 import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 @Entity
 public class Establishment {
 
@@ -16,21 +19,28 @@ public class Establishment {
 
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
     @OneToOne(mappedBy = "establishment", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Playlist playlist;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user", joinColumns = @JoinColumn(name = "establishment_id"))
+    private Collection<User> users = new HashSet<>();
+
     public Establishment() {
     }
 
-    public Establishment(Long id, String deviceId, boolean isOff, String name) {
+    public Establishment(Long id, String deviceId, boolean isOff, String name, Owner owner, Playlist playlist, Collection<User> users) {
         this.id = id;
         this.deviceId = deviceId;
         this.isOff = isOff;
         this.name = name;
+        this.owner = owner;
+        this.playlist = playlist;
+        this.users = users;
     }
 
     public Long getId() {
@@ -81,4 +91,16 @@ public class Establishment {
         this.playlist = playlist;
     }
 
+    public Collection<User> getUser() {
+        return users;
+    }
+
+    public void setUser(Collection<User> users) {
+        this.users = users;
+    }
+
+    public void addUser(User user) {
+        user.setExpiresIn(System.currentTimeMillis() + 7200 * 1000);
+        users.add(user);
+    }
 }
