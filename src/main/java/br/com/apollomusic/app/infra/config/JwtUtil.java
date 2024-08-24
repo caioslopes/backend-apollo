@@ -1,6 +1,7 @@
 package br.com.apollomusic.app.infra.config;
 
 import br.com.apollomusic.app.domain.Owner.Owner;
+import br.com.apollomusic.app.domain.Owner.Role;
 import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -46,6 +48,7 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("ownerId", owner.getId());
         claims.put("establishmentId", owner.getEstablishment().getId());
+        claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         claims.put("email", owner.getEmail());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 20));

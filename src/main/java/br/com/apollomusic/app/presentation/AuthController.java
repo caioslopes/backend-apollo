@@ -9,6 +9,7 @@ import br.com.apollomusic.app.domain.services.ApiAuthService;
 import br.com.apollomusic.app.domain.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,8 @@ public class AuthController {
         return authService.logoutUser(logoutUserRequest);
     }
 
-        @PostMapping("/api")
+    @PostMapping("/api")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> authApi(Authentication authentication, @RequestBody AuthorizeThirdPartyRequest authorizeThirdPartyRequest) {
         String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
         return apiAuthService.getAccessTokenFromApi(authorizeThirdPartyRequest, ownerEmail);
