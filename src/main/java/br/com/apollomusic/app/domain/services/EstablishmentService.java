@@ -23,15 +23,13 @@ public class EstablishmentService {
     private final OwnerRepository ownerRepository;
     private final ThirdPartyService thirdPartyService;
     private final AlgorithmService algorithmService;
-    private final ApiAuthService apiAuthService;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService, ApiAuthService apiAuthService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
         this.establishmentRepository = establishmentRepository;
         this.ownerRepository = ownerRepository;
         this.thirdPartyService = thirdPartyService;
         this.algorithmService = algorithmService;
-        this.apiAuthService = apiAuthService;
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -174,6 +172,21 @@ public class EstablishmentService {
 
         PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
+
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<?> getAvailableGenres(long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
+
+        Map<String, Integer> genres =  establishment.getPlaylist().getGenres();
+
+        Integer totalVotes = 0;
+        for (Map.Entry<String, Integer> g : genres.entrySet()){
+            totalVotes += g.getValue();
+        }
+
+        AvailableGenresVotesResponse response = new AvailableGenresVotesResponse(genres, totalVotes);
 
         return ResponseEntity.ok(response);
     }
