@@ -23,15 +23,13 @@ public class EstablishmentService {
     private final OwnerRepository ownerRepository;
     private final ThirdPartyService thirdPartyService;
     private final AlgorithmService algorithmService;
-    private final ApiAuthService apiAuthService;
 
     @Autowired
-    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService, ApiAuthService apiAuthService) {
+    public EstablishmentService(EstablishmentRepository establishmentRepository, OwnerRepository ownerRepository, ThirdPartyService thirdPartyService, AlgorithmService algorithmService) {
         this.establishmentRepository = establishmentRepository;
         this.ownerRepository = ownerRepository;
         this.thirdPartyService = thirdPartyService;
         this.algorithmService = algorithmService;
-        this.apiAuthService = apiAuthService;
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -180,22 +178,15 @@ public class EstablishmentService {
 
     public ResponseEntity<?> getAvailableGenres(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
+
         Map<String, Integer> genres =  establishment.getPlaylist().getGenres();
-        Collection<String> blockedGenres = establishment.getPlaylist().getBlockedGenres();
 
-        Map<String, Integer> genresSafe = new HashMap<>();
-        Integer genresTotal = 0;
-        Integer votesTotal = 0;
-
+        Integer totalVotes = 0;
         for (Map.Entry<String, Integer> g : genres.entrySet()){
-            if (!blockedGenres.contains(g.getKey())){
-                genresSafe.put(g.getKey(), g.getValue());
-                genresTotal++;
-                votesTotal += g.getValue();
-            }
+            totalVotes += g.getValue();
         }
 
-        var response = new AvailableGenresVotesResponses(genresSafe, votesTotal, genresTotal);
+        AvailableGenresVotesResponse response = new AvailableGenresVotesResponse(genres, totalVotes);
 
         return ResponseEntity.ok(response);
     }
