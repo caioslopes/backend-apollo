@@ -27,6 +27,11 @@ public class EstablishmentController {
         return establishmentService.getEstablishment(establishmentId);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEstablishmentById(@PathVariable Long id) {
+        return establishmentService.getEstablishment(id);
+    }
+
     @PostMapping("/turn-on")
     public ResponseEntity<?> turnOn(Authentication authentication) {
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
