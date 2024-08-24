@@ -42,7 +42,7 @@ public class AuthController {
         return authService.logoutUser(logoutUserRequest);
     }
 
-    @PostMapping("/api")
+        @PostMapping("/api")
     public ResponseEntity<?> authApi(Authentication authentication, @RequestBody AuthorizeThirdPartyRequest authorizeThirdPartyRequest) {
         String ownerEmail = jwtUtil.extractItemFromToken(authentication, "email");
         return apiAuthService.getAccessTokenFromApi(authorizeThirdPartyRequest, ownerEmail);

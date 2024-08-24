@@ -46,7 +46,6 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("ownerId", owner.getId());
         claims.put("establishmentId", owner.getEstablishment().getId());
-//        claims.put("scope", owner.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         claims.put("email", owner.getEmail());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity * 20));
