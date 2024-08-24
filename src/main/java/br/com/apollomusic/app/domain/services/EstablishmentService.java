@@ -178,6 +178,28 @@ public class EstablishmentService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<?> getAvailableGenres(long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        Map<String, Integer> genres =  establishment.getPlaylist().getGenres();
+        Collection<String> blockedGenres = establishment.getPlaylist().getBlockedGenres();
+
+        Map<String, Integer> genresSafe = new HashMap<>();
+        Integer genresTotal = 0;
+        Integer votesTotal = 0;
+
+        for (Map.Entry<String, Integer> g : genres.entrySet()){
+            if (!blockedGenres.contains(g.getKey())){
+                genresSafe.put(g.getKey(), g.getValue());
+                genresTotal++;
+                votesTotal += g.getValue();
+            }
+        }
+
+        var response = new AvailableGenresVotesResponses(genresSafe, votesTotal, genresTotal);
+
+        return ResponseEntity.ok(response);
+    }
+
     public ResponseEntity<?> getDevices(long establishmentId, String ownerEmail){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Owner owner = ownerRepository.findByEmail(ownerEmail).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));

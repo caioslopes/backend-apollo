@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/owner").permitAll()
                         .requestMatchers(HttpMethod.GET, "/establishment/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/establishment/playlist/genres/{establishmentId}").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder())))

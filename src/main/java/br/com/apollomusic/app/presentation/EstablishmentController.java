@@ -1,13 +1,11 @@
 package br.com.apollomusic.app.presentation;
 
-import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
 import br.com.apollomusic.app.domain.payload.request.ManipulateGenreRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.infra.config.JwtUtil;
 import br.com.apollomusic.app.domain.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +52,10 @@ public class EstablishmentController {
     public ResponseEntity<?> createPlaylist(Authentication authentication){
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
         return establishmentService.createPlaylist(establishmentId);
+    }
+    @GetMapping("/playlist/genres/{establishmentId}")
+    public ResponseEntity<?> getAvailableGenres(@PathVariable Long establishmentId){
+         return establishmentService.getAvailableGenres(establishmentId);
     }
 
     @PutMapping("/playlist/genres/block")
