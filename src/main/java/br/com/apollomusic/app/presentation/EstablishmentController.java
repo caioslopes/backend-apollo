@@ -29,7 +29,7 @@ public class EstablishmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getEstablishmentById(@PathVariable Long id) {
-        return establishmentService.getEstablishment(id);
+        return establishmentService.getEstablishmentUserInfos(id);
     }
 
     @PostMapping("/turn-on")

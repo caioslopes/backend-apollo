@@ -176,6 +176,14 @@ public class EstablishmentService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<?> getEstablishmentUserInfos(long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        EstablishmentUserInfosResponse response = new EstablishmentUserInfosResponse(establishment.isOff(), establishment.getName(), establishment.getUser().size());
+
+        return ResponseEntity.ok(response);
+    }
+
     public ResponseEntity<?> getAvailableGenres(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
