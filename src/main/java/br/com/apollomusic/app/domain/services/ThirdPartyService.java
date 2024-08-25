@@ -2,6 +2,7 @@ package br.com.apollomusic.app.domain.services;
 
 import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.payload.ObjectUri;
+import br.com.apollomusic.app.domain.payload.request.PlaybackOffSetRequest;
 import br.com.apollomusic.app.domain.payload.request.AddSongsToPlaylistRequest;
 import br.com.apollomusic.app.domain.payload.request.CreatePlaylistRequest;
 import br.com.apollomusic.app.domain.payload.request.RemoveSongsFromPlaylistRequest;
@@ -58,7 +59,7 @@ public class ThirdPartyService {
         var playbackState = getPlaybackState(spotifyAccessToken);
 
         String endpoint = "/me/player/play";
-        StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, null, playbackState.progress_ms());
+        StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, new PlaybackOffSetRequest("spotify:track:" + playbackState.item().id()), playbackState.progress_ms());
         apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
     }
 
