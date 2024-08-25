@@ -100,6 +100,13 @@ public class EstablishmentController {
         return establishmentService.getDevices(establishmentId, ownerEmail);
     }
 
+    @GetMapping("/player")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> getPlaybackState(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.getPlaybackState(establishmentId);
+    }
+
     @PostMapping("/devices")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> setMainDevice(Authentication authentication, @RequestBody SetDeviceRequest setDeviceRequest){

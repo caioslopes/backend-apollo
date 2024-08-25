@@ -208,6 +208,18 @@ public class EstablishmentService {
         return ResponseEntity.ok(devices);
     }
 
+    public ResponseEntity<?> getPlaybackState(long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        PlaybackStateResponse response = thirdPartyService.getPlaybackState(establishment.getOwner().getAccessToken());
+
+        if (response != null){
+            return ResponseEntity.ok(response);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     public ResponseEntity<?> setMainDevice(long establishmentId, SetDeviceRequest setDeviceRequest){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         establishment.setDeviceId(setDeviceRequest.id());
