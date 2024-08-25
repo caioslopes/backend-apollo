@@ -123,4 +123,13 @@ public class ThirdPartyService {
         return gson.fromJson(response, ChangePlaylistResponse.class);
     }
 
+    public void skipToNext(String spotifyAccessToken){
+        String endpoint = "/me/player/next";
+        apiService.post(endpoint, null, spotifyAccessToken);
+    }
+
+    public void skipToPrevious(String spotifyAccessToken){
+        String endpoint = "/me/player/previous";
+        apiService.post(endpoint, null, spotifyAccessToken);
+    }
 }

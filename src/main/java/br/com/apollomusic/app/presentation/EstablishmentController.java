@@ -128,4 +128,18 @@ public class EstablishmentController {
         return establishmentService.pausePlayback(establishmentId);
     }
 
+    @PostMapping("/player/next")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> skipToNext(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.skipToNext(establishmentId);
+    }
+
+    @PostMapping("/player/previous")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> skipToPrevious(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.skipToPrevious(establishmentId);
+    }
+
 }

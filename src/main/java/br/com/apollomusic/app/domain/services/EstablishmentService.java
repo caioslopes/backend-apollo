@@ -274,4 +274,19 @@ public class EstablishmentService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    public ResponseEntity<?> skipToNext(Long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        thirdPartyService.skipToNext(establishment.getOwner().getAccessToken());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> skipToPrevious(Long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        thirdPartyService.skipToPrevious(establishment.getOwner().getAccessToken());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
