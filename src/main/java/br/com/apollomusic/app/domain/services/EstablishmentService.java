@@ -49,7 +49,7 @@ public class EstablishmentService {
 
                 thirdPartyService.setShuffleMode("true", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
-                thirdPartyService.startResumePlayback(establishment.getPlaylist().getUri(), "", establishment.getOwner().getAccessToken());
+                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), "", establishment.getOwner().getAccessToken());
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -236,5 +236,30 @@ public class EstablishmentService {
         establishmentRepository.save(establishment);
     }
 
+    public ResponseEntity<?> resumePlayback(Long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (thirdPartyService.getPlaybackState(establishment.getOwner().getAccessToken()).is_playing()){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        thirdPartyService.resumePlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> pausePlayback(Long establishmentId){
+        Establishment establishment = establishmentRepository.findById(establishmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!thirdPartyService.getPlaybackState(establishment.getOwner().getAccessToken()).is_playing()){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        thirdPartyService.pausePlayback(establishment.getDeviceId(), establishment.getOwner().getAccessToken());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

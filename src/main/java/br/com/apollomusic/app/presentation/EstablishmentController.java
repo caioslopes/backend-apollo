@@ -107,4 +107,18 @@ public class EstablishmentController {
         return establishmentService.setMainDevice(establishmentId, setDeviceRequest);
     }
 
+    @PutMapping("/player/resume")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> resumePlayer(Authentication authentication){
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.resumePlayback(establishmentId);
+    }
+
+    @PutMapping("/player/pause")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> pausePlayer(Authentication authentication){
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.pausePlayback(establishmentId);
+    }
+
 }

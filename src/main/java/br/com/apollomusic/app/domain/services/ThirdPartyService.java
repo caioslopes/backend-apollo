@@ -43,11 +43,25 @@ public class ThirdPartyService {
         return gson.fromJson(response, AvailableGenresResponse.class);
     }
 
-    public void startResumePlayback(String contextUri, String deviceId, String spotifyAccessToken){
+    public PlaybackStateResponse getPlaybackState(String spotifyAccessToken){
+        String response = apiService.get("/me/player", new HashMap<>(), spotifyAccessToken);
+        return gson.fromJson(response, PlaybackStateResponse.class);
+    }
+
+    public void startPlayback(String contextUri, String deviceId, String spotifyAccessToken){
         String endpoint = "/me/player/play";
         StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, null, 0);
         apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
     }
+
+    public void resumePlayback(String contextUri, String spotifyAccessToken){
+        var playbackState = getPlaybackState(spotifyAccessToken);
+
+        String endpoint = "/me/player/play";
+        StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, null, playbackState.progress_ms());
+        apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
+    }
+
 
     public void setRepeatMode(String state, String deviceId, String spotifyAccessToken){
         String endpoint = "/me/player/repeat";
