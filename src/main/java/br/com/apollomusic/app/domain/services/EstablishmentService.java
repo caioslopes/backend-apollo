@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EstablishmentService {
@@ -41,6 +42,7 @@ public class EstablishmentService {
 
             if (establishment.getPlaylist().getVotesQuantity() > 0){
                 establishment.setOff(false);
+
                 algorithmService.runAlgorithm(establishment);
 
                 establishmentRepository.save(establishment);
@@ -66,10 +68,20 @@ public class EstablishmentService {
 
         AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
 
-        Map<String, Integer> genres = new HashMap<>();
-        availableGenresResponse.genres().forEach(genre -> genres.put(genre, 0));
+        Playlist playlist = establishment.getPlaylist();
 
-        establishment.getPlaylist().setGenres(genres);
+        Map<String, Integer> genres = new HashMap<>();
+        availableGenresResponse.genres()
+                .stream().filter(genre -> !playlist.getBlockedGenres().contains(genre))
+                .forEach(genre -> genres.put(genre, 0));
+
+        for(Map.Entry<String, Integer> entry : genres.entrySet()){
+            if(playlist.getInitialGenres().contains(entry.getKey())){
+                genres.put(entry.getKey(), 1);
+            }
+        }
+
+        playlist.setGenres(genres);
 
         establishmentRepository.save(establishment);
 
@@ -84,7 +96,7 @@ public class EstablishmentService {
         Map<String, Integer> genres = new HashMap<>();
         availableGenresResponse.genres().forEach(genre -> genres.put(genre, 0));
 
-        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), establishment, new HashSet<>(), genres, new HashSet<>());
+        Playlist playlist = new Playlist(createPlaylistResponse.id(), createPlaylistResponse.snapshot_id(), establishment, new HashSet<>(),new HashSet<>(), genres, new HashSet<>());
 
         establishment.setPlaylist(playlist);
         establishmentRepository.save(establishment);
@@ -159,8 +171,34 @@ public class EstablishmentService {
 
         ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
 
-        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
+        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres(), playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         return ResponseEntity.ok(playlistResponse);
+    }
+
+    public ResponseEntity<?> setPlaylistInitialGenres(long establishmentId, Set<String> genres){
+        Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Playlist playlist = establishment.getPlaylist();
+        if(playlist == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        Set<String> genresToIncrement = genres;
+
+        if(!playlist.getInitialGenres().isEmpty()){
+            Set<String> genresToDecrement = playlist.getInitialGenres().stream()
+                    .filter(g -> !genres.contains(g))
+                    .collect(Collectors.toSet());
+
+            decrementVoteGenres(establishmentId, genresToDecrement);
+
+            genresToIncrement = genres.stream()
+                    .filter(g -> !playlist.getInitialGenres().contains(g))
+                    .collect(Collectors.toSet());
+        }
+
+        playlist.setInitialGenres(genres);
+
+        incrementVoteGenres(establishmentId, genresToIncrement);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> getEstablishment(long establishmentId){
@@ -170,7 +208,7 @@ public class EstablishmentService {
 
         ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
 
-        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
+        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres(), playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
 
         return ResponseEntity.ok(response);
