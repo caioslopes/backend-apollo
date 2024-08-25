@@ -107,11 +107,46 @@ public class EstablishmentController {
         return establishmentService.getDevices(establishmentId, ownerEmail);
     }
 
+    @GetMapping("/player")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> getPlaybackState(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.getPlaybackState(establishmentId);
+    }
+
     @PostMapping("/devices")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> setMainDevice(Authentication authentication, @RequestBody SetDeviceRequest setDeviceRequest){
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
         return establishmentService.setMainDevice(establishmentId, setDeviceRequest);
+    }
+
+    @PutMapping("/player/resume")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> resumePlayer(Authentication authentication){
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.resumePlayback(establishmentId);
+    }
+
+    @PutMapping("/player/pause")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> pausePlayer(Authentication authentication){
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.pausePlayback(establishmentId);
+    }
+
+    @PostMapping("/player/next")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> skipToNext(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.skipToNext(establishmentId);
+    }
+
+    @PostMapping("/player/previous")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> skipToPrevious(Authentication authentication) {
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.skipToPrevious(establishmentId);
     }
 
 }
