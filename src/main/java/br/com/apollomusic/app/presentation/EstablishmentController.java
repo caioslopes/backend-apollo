@@ -92,6 +92,13 @@ public class EstablishmentController {
         return establishmentService.decrementVoteGenres(establishmentId, manipulateGenreRequest.genres());
     }
 
+    @PutMapping("/playlist/genres/initial")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> setPlaylistInitialGenres(Authentication authentication, @RequestBody ManipulateGenreRequest manipulateGenreRequest){
+        Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
+        return establishmentService.setPlaylistInitialGenres(establishmentId, manipulateGenreRequest.genres());
+    }
+
     @GetMapping("/devices")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> getDevices(Authentication authentication) {

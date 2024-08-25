@@ -19,6 +19,11 @@ public class Playlist {
     private Establishment establishment;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "initial_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
+    @Column(name = "genre")
+    private Collection<String> initialGenres;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "blocked_genres_playlist", joinColumns = @JoinColumn(name = "playlist_id"))
     @Column(name = "genre")
     private Collection<String> blockedGenres = new HashSet<>();
@@ -36,11 +41,11 @@ public class Playlist {
     public Playlist() {
     }
 
-
-    public Playlist(String id, String snapshot, Establishment establishment, Collection<String> blockedGenres, Map<String, Integer> genres, Collection<Song> songs) {
+    public Playlist(String id, String snapshot, Establishment establishment, Collection<String> initialGenres,Collection<String> blockedGenres, Map<String, Integer> genres, Collection<Song> songs) {
         this.id = id;
         this.snapshot = snapshot;
         this.establishment = establishment;
+        this.initialGenres = initialGenres;
         this.blockedGenres = blockedGenres;
         this.genres = genres;
         this.songs = songs;
@@ -68,6 +73,14 @@ public class Playlist {
 
     public void setEstablishment(Establishment establishment) {
         this.establishment = establishment;
+    }
+
+    public Collection<String> getInitialGenres() {
+        return initialGenres;
+    }
+
+    public void setInitialGenres(Collection<String> initialGenres) {
+        this.initialGenres = initialGenres;
     }
 
     public Collection<String> getBlockedGenres() {
