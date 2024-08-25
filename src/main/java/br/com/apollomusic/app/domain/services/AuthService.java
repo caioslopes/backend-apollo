@@ -25,17 +25,19 @@ public class AuthService {
 
     private final EstablishmentRepository establishmentRepository;
     private final EstablishmentService establishmentService;
+    private final ApiAuthService apiAuthService;
     private final JwtUtil jwtUtil;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthService(EstablishmentRepository establishmentRepository, EstablishmentService establishmentService, JwtUtil jwtUtil, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(EstablishmentRepository establishmentRepository, EstablishmentService establishmentService, JwtUtil jwtUtil, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder, ApiAuthService apiAuthService) {
         this.establishmentRepository = establishmentRepository;
         this.establishmentService = establishmentService;
         this.jwtUtil = jwtUtil;
         this.ownerRepository = ownerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.apiAuthService = apiAuthService;
     }
 
     public ResponseEntity<?> loginUser(LoginUserRequest loginUserRequest) {
@@ -44,6 +46,8 @@ public class AuthService {
         if (establishment.isOff()) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+
+        apiAuthService.renewTokenIfNeeded(establishment.getOwner().getEmail());
 
         establishmentService.incrementVoteGenres(establishment.getId(), loginUserRequest.genres());
 
