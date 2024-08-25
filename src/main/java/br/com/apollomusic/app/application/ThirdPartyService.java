@@ -50,7 +50,7 @@ public class ThirdPartyService {
         return gson.fromJson(response, PlaybackStateResponse.class);
     }
 
-    public void startPlayback(String contextUri, String deviceId, String spotifyAccessToken){
+    public void startPlayback(String contextUri, String spotifyAccessToken){
         String endpoint = "/me/player/play";
         StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, null, 0);
         apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);

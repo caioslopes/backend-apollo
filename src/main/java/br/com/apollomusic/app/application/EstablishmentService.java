@@ -51,7 +51,7 @@ public class EstablishmentService {
 
                 thirdPartyService.setShuffleMode("true", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
-                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), "", establishment.getOwner().getAccessToken());
+                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken());
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -84,6 +84,8 @@ public class EstablishmentService {
         playlist.setGenres(genres);
 
         establishmentRepository.save(establishment);
+
+        thirdPartyService.pausePlayback(establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
