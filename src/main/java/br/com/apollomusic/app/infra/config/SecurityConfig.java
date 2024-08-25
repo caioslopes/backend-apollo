@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.infra.config;
 
-import br.com.apollomusic.app.domain.services.CustomUserDetailsService;
+import br.com.apollomusic.app.application.CustomUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

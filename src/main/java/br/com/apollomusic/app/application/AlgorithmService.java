@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.application;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Owner.Owner;
@@ -6,7 +6,6 @@ import br.com.apollomusic.app.domain.Establishment.Playlist;
 import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.payload.response.ChangePlaylistResponse;
 import br.com.apollomusic.app.domain.payload.response.RecommendationsResponse;
-import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

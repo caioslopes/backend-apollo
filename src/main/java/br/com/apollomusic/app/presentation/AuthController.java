@@ -5,15 +5,13 @@ import br.com.apollomusic.app.domain.payload.request.LoginOwnerRequest;
 import br.com.apollomusic.app.domain.payload.request.LoginUserRequest;
 import br.com.apollomusic.app.domain.payload.request.LogoutUserRequest;
 import br.com.apollomusic.app.infra.config.JwtUtil;
-import br.com.apollomusic.app.domain.services.ApiAuthService;
-import br.com.apollomusic.app.domain.services.AuthService;
+import br.com.apollomusic.app.application.ApiAuthService;
+import br.com.apollomusic.app.application.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")

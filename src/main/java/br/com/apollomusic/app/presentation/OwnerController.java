@@ -1,7 +1,7 @@
 package br.com.apollomusic.app.presentation;
 
 import br.com.apollomusic.app.domain.payload.request.AddOwnerRequest;
-import br.com.apollomusic.app.domain.services.OwnerService;
+import br.com.apollomusic.app.application.OwnerService;
 import br.com.apollomusic.app.infra.config.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

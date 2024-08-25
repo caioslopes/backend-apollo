@@ -1,5 +1,6 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.application;
 
+import br.com.apollomusic.app.application.ApiService;
 import br.com.apollomusic.app.domain.Establishment.Song;
 import br.com.apollomusic.app.domain.payload.ObjectUri;
 import br.com.apollomusic.app.domain.payload.request.PlaybackOffSetRequest;

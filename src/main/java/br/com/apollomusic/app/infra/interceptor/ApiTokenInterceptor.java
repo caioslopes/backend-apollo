@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.infra.interceptor;
 
-import br.com.apollomusic.app.domain.services.ApiAuthService;
+import br.com.apollomusic.app.application.ApiAuthService;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

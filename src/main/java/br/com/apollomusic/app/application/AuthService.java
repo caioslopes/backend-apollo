@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.application;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.User;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class AuthService {

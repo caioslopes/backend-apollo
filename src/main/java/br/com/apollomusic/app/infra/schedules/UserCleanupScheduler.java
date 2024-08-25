@@ -1,7 +1,7 @@
 package br.com.apollomusic.app.infra.schedules;
 
 import br.com.apollomusic.app.domain.Establishment.Establishment;
-import br.com.apollomusic.app.domain.services.EstablishmentService;
+import br.com.apollomusic.app.application.EstablishmentService;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;

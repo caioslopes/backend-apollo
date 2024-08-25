@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.application;
 
 import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.payload.request.AuthorizeThirdPartyRequest;

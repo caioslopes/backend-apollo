@@ -1,4 +1,4 @@
-package br.com.apollomusic.app.domain.services;
+package br.com.apollomusic.app.application;
 
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
