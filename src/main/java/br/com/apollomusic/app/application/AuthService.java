@@ -61,15 +61,6 @@ public class AuthService {
         return new ResponseEntity<>(new LoginOwnerResponse(accessToken), HttpStatus.CREATED);
     }
 
-
-    public ResponseEntity<?> logoutUser(LogoutUserRequest logoutUserRequest) {
-        Establishment establishment = findEstablishment(logoutUserRequest.establishmentId());
-
-        establishmentService.decrementVoteGenres(establishment.getId(), logoutUserRequest.genres());
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     public ResponseEntity<LoginOwnerResponse> loginOwner(LoginOwnerRequest loginOwnerRequest) {
         Establishment establishment = findEstablishment(loginOwnerRequest.establishmentId());
 

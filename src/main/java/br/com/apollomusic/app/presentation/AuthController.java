@@ -36,11 +36,6 @@ public class AuthController {
         return authService.loginUser(loginUserRequest);
     }
 
-    @DeleteMapping("/user")
-    public ResponseEntity<?> logoutUser(@RequestBody LogoutUserRequest logoutUserRequest) {
-        return authService.logoutUser(logoutUserRequest);
-    }
-
     @PostMapping("/api")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> authApi(Authentication authentication, @RequestBody AuthorizeThirdPartyRequest authorizeThirdPartyRequest) {
