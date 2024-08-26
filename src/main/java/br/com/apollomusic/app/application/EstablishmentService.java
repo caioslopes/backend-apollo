@@ -207,10 +207,12 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Playlist playlist = establishment.getPlaylist();
+        PlaylistResponse playlistResponse =  null;
+        if(playlist != null){
+            ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
+            playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
+        }
 
-        ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
-
-        PlaylistResponse playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres(), playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
 
         return ResponseEntity.ok(response);
@@ -242,6 +244,8 @@ public class EstablishmentService {
     public ResponseEntity<?> getDevices(long establishmentId, String ownerEmail){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Owner owner = ownerRepository.findByEmail(ownerEmail).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(owner.getAccessToken() == null) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         Map<String, Collection<DeviceResponse>> devices = thirdPartyService.getDevices(owner.getAccessToken());
 
