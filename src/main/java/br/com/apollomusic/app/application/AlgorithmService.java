@@ -119,6 +119,8 @@ public class AlgorithmService {
         if(playlist == null) return null;
 
         int totalVotes = playlist.getVotesQuantity();
+        if(totalVotes == 0) return null;
+
         HashMap<String, Integer> genresPercent = new HashMap<>();
         HashMap<String, Integer> songQuantityPerGenre = new HashMap<>();
 
