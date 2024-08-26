@@ -83,6 +83,8 @@ public class EstablishmentService {
 
         playlist.setGenres(genres);
 
+        establishment.setUser(new HashSet<>());
+
         establishmentRepository.save(establishment);
 
         thirdPartyService.pausePlayback(establishment.getDeviceId(), establishment.getOwner().getAccessToken());
@@ -178,6 +180,8 @@ public class EstablishmentService {
     }
 
     public ResponseEntity<?> setPlaylistInitialGenres(long establishmentId, Set<String> genres){
+        if(genres.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Playlist playlist = establishment.getPlaylist();
         if(playlist == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);

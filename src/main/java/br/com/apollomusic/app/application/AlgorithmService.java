@@ -116,18 +116,13 @@ public class AlgorithmService {
     }
 
     private HashMap<String, Integer> getSongsQuantityPerGenre(Playlist playlist){
-        int totalVotes = 0;
+        if(playlist == null) return null;
+
+        int totalVotes = playlist.getVotesQuantity();
+        if(totalVotes == 0) return null;
+
         HashMap<String, Integer> genresPercent = new HashMap<>();
         HashMap<String, Integer> songQuantityPerGenre = new HashMap<>();
-
-        if(playlist == null){
-            return null;
-        }
-
-        // foreach to get the total votes
-        for(Integer item : playlist.getGenres().values()){
-            totalVotes += item;
-        }
 
         // foreach to get the percentage of each genre in playlist
         for(var item : playlist.getGenres().entrySet()){
