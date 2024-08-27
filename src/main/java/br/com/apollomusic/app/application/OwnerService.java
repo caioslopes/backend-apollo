@@ -4,7 +4,6 @@ import br.com.apollomusic.app.domain.Owner.Owner;
 import br.com.apollomusic.app.domain.Owner.Role;
 import br.com.apollomusic.app.domain.payload.request.CreateOwnerRequest;
 import br.com.apollomusic.app.domain.payload.response.OwnerResponse;
-import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
 import br.com.apollomusic.app.infra.repository.OwnerRepository;
 import br.com.apollomusic.app.infra.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class OwnerService {
         return new ResponseEntity<>(ownerResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> addOwner(CreateOwnerRequest createOwnerRequest){
+    public ResponseEntity<?> createOwner(CreateOwnerRequest createOwnerRequest){
         Optional<Owner> owner = ownerRepository.findByEmail(createOwnerRequest.email());
         if(owner.isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");

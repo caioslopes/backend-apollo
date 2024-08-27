@@ -34,6 +34,22 @@ public class EstablishmentService {
         this.algorithmService = algorithmService;
     }
 
+    public ResponseEntity<?> createEstablishment(CreateEstablishmentRequest createEstablishmentRequest){
+        Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        Establishment newEstablishment = new Establishment();
+
+        newEstablishment.setName(createEstablishmentRequest.name());
+        newEstablishment.setOff(true);
+        newEstablishment.setOwner(owner);
+
+        establishmentRepository.save(newEstablishment);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     public ResponseEntity<?> turnOn(Long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (establishment.isOff()){
@@ -91,21 +107,6 @@ public class EstablishmentService {
         thirdPartyService.pausePlayback(establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-    public ResponseEntity<?> createEstablishment(CreateEstablishmentRequest createEstablishmentRequest){
-        Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
-
-        Establishment newEstablishment = new Establishment();
-
-        newEstablishment.setName(createEstablishmentRequest.name());
-        newEstablishment.setOff(true);
-        newEstablishment.setOwner(owner);
-
-        establishmentRepository.save(newEstablishment);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> createPlaylist(long establishmentId){

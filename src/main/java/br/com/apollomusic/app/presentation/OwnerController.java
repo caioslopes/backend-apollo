@@ -27,7 +27,7 @@ public class OwnerController {
     public ResponseEntity<?> createOwner(@RequestHeader("X-Secret-Key") String secretKey,
                                          @RequestBody CreateOwnerRequest createOwnerRequest) {
         if (!SECRET_KEY.equals(secretKey)) return ResponseEntity.status(403).body("Forbidden: Invalid secret key");
-        return ownerService.addOwner(createOwnerRequest);
+        return ownerService.createOwner(createOwnerRequest);
     }
 
     @GetMapping
