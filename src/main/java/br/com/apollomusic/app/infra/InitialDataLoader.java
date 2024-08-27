@@ -30,20 +30,20 @@ public class InitialDataLoader implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (ownerRepository.count() == 0 && establishmentRepository.count() == 0) {
             Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
 
             Owner owner = new Owner();
             owner.setEmail("zinho@gmail.com");
-            owner.setName("Joãozinho");
+            owner.setName("Francisco Salles Colturato");
             owner.setPassword(passwordEncoder.encode("123"));
             owner.setRoles(Set.of(roleAdmin));
 
             ownerRepository.save(owner);
 
             Establishment establishment = new Establishment();
-            establishment.setName("Zinho");
+            establishment.setName("Bar do Zinho");
             establishment.setOff(true);
             establishment.setOwner(owner);
 

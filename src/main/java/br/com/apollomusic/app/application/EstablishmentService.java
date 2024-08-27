@@ -4,6 +4,7 @@ import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
 import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
+import br.com.apollomusic.app.domain.payload.request.CreateEstablishmentRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.domain.payload.response.*;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
@@ -31,6 +32,22 @@ public class EstablishmentService {
         this.ownerRepository = ownerRepository;
         this.thirdPartyService = thirdPartyService;
         this.algorithmService = algorithmService;
+    }
+
+    public ResponseEntity<?> createEstablishment(CreateEstablishmentRequest createEstablishmentRequest){
+        Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        Establishment newEstablishment = new Establishment();
+
+        newEstablishment.setName(createEstablishmentRequest.name());
+        newEstablishment.setOff(true);
+        newEstablishment.setOwner(owner);
+
+        establishmentRepository.save(newEstablishment);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){

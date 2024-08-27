@@ -1,6 +1,6 @@
 package br.com.apollomusic.app.presentation;
 
-import br.com.apollomusic.app.domain.payload.request.AddOwnerRequest;
+import br.com.apollomusic.app.domain.payload.request.CreateOwnerRequest;
 import br.com.apollomusic.app.application.OwnerService;
 import br.com.apollomusic.app.infra.config.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,15 @@ public class OwnerController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Value("secret.key")
+    @Value("${secret.key}")
     private String SECRET_KEY;
+
+    @PostMapping("/new")
+    public ResponseEntity<?> createOwner(@RequestHeader("X-Secret-Key") String secretKey,
+                                         @RequestBody CreateOwnerRequest createOwnerRequest) {
+        if (!SECRET_KEY.equals(secretKey)) return ResponseEntity.status(403).body("Forbidden: Invalid secret key");
+        return ownerService.createOwner(createOwnerRequest);
+    }
 
     @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
@@ -30,13 +37,5 @@ public class OwnerController {
         return ownerService.getOwnerByEmail(ownerEmail);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createOwner(@RequestHeader("X-Secret-Key") String secretKey,
-                                         @RequestBody AddOwnerRequest addOwnerRequest) {
-        if (!SECRET_KEY.equals(secretKey)) {
-            return ResponseEntity.status(403).body("Forbidden: Invalid secret key");
-        }
-        return ownerService.addOwner(addOwnerRequest);
-    }
 }
 
