@@ -4,6 +4,7 @@ import br.com.apollomusic.app.domain.Establishment.Establishment;
 import br.com.apollomusic.app.domain.Establishment.Playlist;
 import br.com.apollomusic.app.domain.Establishment.User;
 import br.com.apollomusic.app.domain.Owner.Owner;
+import br.com.apollomusic.app.domain.payload.request.AddEstablishmentRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.domain.payload.response.*;
 import br.com.apollomusic.app.infra.repository.EstablishmentRepository;
@@ -90,6 +91,24 @@ public class EstablishmentService {
         thirdPartyService.pausePlayback(establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    public ResponseEntity<?> createEstablishment(AddEstablishmentRequest newEstablishment){
+        Optional<Establishment> establishment = establishmentRepository.findById(newEstablishment.establishmentId());
+        if (establishment.isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+        Establishment establishmentFinal = new Establishment();
+        establishmentFinal.setId(newEstablishment.establishmentId());
+        establishmentFinal.setName(newEstablishment.name());
+        establishmentFinal.setDeviceId(null);
+        establishmentFinal.setPlaylist(null);
+        establishmentFinal.setOwner(null);
+        establishmentFinal.setOff(true);
+
+        establishmentRepository.save(establishmentFinal);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
     }
 
     public ResponseEntity<?> createPlaylist(long establishmentId){

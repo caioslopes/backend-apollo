@@ -1,10 +1,12 @@
 package br.com.apollomusic.app.presentation;
 
+import br.com.apollomusic.app.domain.payload.request.AddEstablishmentRequest;
 import br.com.apollomusic.app.domain.payload.request.ManipulateGenreRequest;
 import br.com.apollomusic.app.domain.payload.request.SetDeviceRequest;
 import br.com.apollomusic.app.infra.config.JwtUtil;
 import br.com.apollomusic.app.application.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,6 +21,10 @@ public class EstablishmentController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Value("1d556ce66b11b5ca076cbe5c2ae09284")
+    private String SECRET_KEY;
+
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
@@ -52,7 +58,15 @@ public class EstablishmentController {
         Long establishmentId = jwtUtil.extractItemFromToken(authentication, "establishmentId");
         return establishmentService.getPlaylist(establishmentId);
     }
+    @PostMapping("")
+    public ResponseEntity<?> createEstablishment(@RequestHeader("X-Secret-Key") String secretKey,
+                                         @RequestBody AddEstablishmentRequest addEstablishmentRequest){
+        if(!SECRET_KEY.equals(secretKey)){
+            return ResponseEntity.status(403).body("Forbidden: Invalid secret key");
+        }
+        return establishmentService.createEstablishment(addEstablishmentRequest);
 
+    }
     @PostMapping("/playlist")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<?> createPlaylist(Authentication authentication){
