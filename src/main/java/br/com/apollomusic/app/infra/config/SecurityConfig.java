@@ -61,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/owner/new").permitAll()
                         .requestMatchers(HttpMethod.POST, "/establishment/new").permitAll()
                         .requestMatchers(HttpMethod.GET, "/establishment/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         .requestMatchers(HttpMethod.GET, "/establishment/playlist/genres/{establishmentId}").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2

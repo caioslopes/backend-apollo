@@ -31,6 +31,11 @@ public class InitialDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if(ownerRepository.count() > 0 && establishmentRepository.count() > 0){
+            ownerRepository.deleteAll();
+            establishmentRepository.deleteAll();
+        }
+
         if (ownerRepository.count() == 0 && establishmentRepository.count() == 0) {
             Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
 
