@@ -31,6 +31,9 @@ public class AlgorithmService {
         Playlist playlist = establishment.getPlaylist();
 
         HashMap<String, Integer> songsQuantityPerGenre = getSongsQuantityPerGenre(playlist);
+
+        if(songsQuantityPerGenre == null) return;
+
         Collection<Song> songsInPlaylist = playlist.getSongs();
 
         int songsQuantity;

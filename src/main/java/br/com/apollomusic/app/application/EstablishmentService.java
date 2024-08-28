@@ -35,19 +35,21 @@ public class EstablishmentService {
     }
 
     public ResponseEntity<?> createEstablishment(CreateEstablishmentRequest createEstablishmentRequest){
-        Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(createEstablishmentRequest.name() != null && !createEstablishmentRequest.name().isEmpty()
+                && createEstablishmentRequest.email() != null && !createEstablishmentRequest.email().isEmpty()){
 
-        if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
+            Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
-        Establishment newEstablishment = new Establishment();
+            Establishment newEstablishment = new Establishment();
+            newEstablishment.setName(createEstablishmentRequest.name());
+            newEstablishment.setOff(true);
+            newEstablishment.setOwner(owner);
+            establishmentRepository.save(newEstablishment);
+            return new ResponseEntity<>(newEstablishment.getId(), HttpStatus.CREATED);
+        }
 
-        newEstablishment.setName(createEstablishmentRequest.name());
-        newEstablishment.setOff(true);
-        newEstablishment.setOwner(owner);
-
-        establishmentRepository.save(newEstablishment);
-
-        return new ResponseEntity<>(newEstablishment.getId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -129,6 +131,14 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Playlist playlist = establishment.getPlaylist();
+
+        Collection<String> initialGenres = playlist.getInitialGenres();
+        for(String g : genres){
+            if(initialGenres.contains(g)){
+                return new ResponseEntity<>("Você não pode bloquear gêneros que estão sendo utilizados", HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+
         playlist.addBlockGenres(genres);
 
         establishment.setPlaylist(playlist);

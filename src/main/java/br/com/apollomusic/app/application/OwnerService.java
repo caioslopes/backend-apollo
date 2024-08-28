@@ -44,13 +44,19 @@ public class OwnerService {
 
         Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Owner newOwner = new Owner();
-        newOwner.setEmail(createOwnerRequest.email());
-        newOwner.setPassword(passwordEncoder.encode(createOwnerRequest.password()));
-        newOwner.setRoles(Set.of(roleAdmin));
-        ownerRepository.save(newOwner);
+        if(createOwnerRequest.name() != null && !createOwnerRequest.name().isEmpty()
+                && createOwnerRequest.email() != null && !createOwnerRequest.email().isEmpty()
+                && createOwnerRequest.password() != null && !createOwnerRequest.password().isEmpty()){
+            Owner newOwner = new Owner();
+            newOwner.setName(createOwnerRequest.name());
+            newOwner.setEmail(createOwnerRequest.email());
+            newOwner.setPassword(passwordEncoder.encode(createOwnerRequest.password()));
+            newOwner.setRoles(Set.of(roleAdmin));
+            ownerRepository.save(newOwner);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }
