@@ -56,10 +56,10 @@ public class ThirdPartyService {
         apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
     }
 
-    public void resumePlayback(String contextUri, String spotifyAccessToken){
+    public void resumePlayback(String contextUri, String spotifyAccessToken, String deviceId){
         var playbackState = getPlaybackState(spotifyAccessToken);
 
-        String endpoint = "/me/player/play";
+        String endpoint = "/me/player/play?device_id=" + deviceId;
         StartResumePlaybackRequest startResumePlaybackRequest = new StartResumePlaybackRequest(contextUri, new PlaybackOffSetRequest("spotify:track:" + playbackState.item().id()), playbackState.progress_ms());
         apiService.put(endpoint, null, startResumePlaybackRequest, spotifyAccessToken);
     }
