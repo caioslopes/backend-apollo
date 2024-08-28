@@ -70,7 +70,7 @@ public class EstablishmentService {
 
                 thirdPartyService.setShuffleMode("true", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
-                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken());
+                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken(), establishment.getDeviceId());
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }
