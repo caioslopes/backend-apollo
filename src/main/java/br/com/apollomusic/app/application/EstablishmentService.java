@@ -321,7 +321,7 @@ public class EstablishmentService {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        thirdPartyService.resumePlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken());
+        thirdPartyService.resumePlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken(), establishment.getDeviceId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
