@@ -47,7 +47,7 @@ public class EstablishmentService {
 
         establishmentRepository.save(newEstablishment);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(newEstablishment.getId(), HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
