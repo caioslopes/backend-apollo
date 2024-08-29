@@ -252,10 +252,6 @@ public class EstablishmentService {
             playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         }
 
-        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
 
         return ResponseEntity.ok(response);
