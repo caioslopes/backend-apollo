@@ -89,10 +89,6 @@ public class EstablishmentService {
 
         establishment.setOff(true);
 
-        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
         AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
 
         Playlist playlist = establishment.getPlaylist();
@@ -121,7 +117,7 @@ public class EstablishmentService {
 
     public ResponseEntity<?> createPlaylist(long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "", establishment.getOwner().getAccessToken());
+        CreatePlaylistResponse createPlaylistResponse = thirdPartyService.createPlaylist(establishment.getName(), "Playlist gerada para tocar em "+establishment.getName(), establishment.getOwner().getAccessToken());
         AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
 
         Map<String, Integer> genres = new HashMap<>();
@@ -250,10 +246,6 @@ public class EstablishmentService {
         if(playlist != null){
             ThirdPartyPlaylistResponse thirdPartyPlaylistResponse = thirdPartyService.getPlaylist(playlist.getId(), establishment.getOwner().getAccessToken());
             playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
-        }
-
-        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
