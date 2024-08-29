@@ -35,19 +35,21 @@ public class EstablishmentService {
     }
 
     public ResponseEntity<?> createEstablishment(CreateEstablishmentRequest createEstablishmentRequest){
-        Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(createEstablishmentRequest.name() != null && !createEstablishmentRequest.name().isEmpty()
+                && createEstablishmentRequest.email() != null && !createEstablishmentRequest.email().isEmpty()){
 
-        if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
+            Owner owner = ownerRepository.findByEmail(createEstablishmentRequest.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            if(owner.getEstablishment() != null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
-        Establishment newEstablishment = new Establishment();
+            Establishment newEstablishment = new Establishment();
+            newEstablishment.setName(createEstablishmentRequest.name());
+            newEstablishment.setOff(true);
+            newEstablishment.setOwner(owner);
+            establishmentRepository.save(newEstablishment);
+            return new ResponseEntity<>(newEstablishment.getId(), HttpStatus.CREATED);
+        }
 
-        newEstablishment.setName(createEstablishmentRequest.name());
-        newEstablishment.setOff(true);
-        newEstablishment.setOwner(owner);
-
-        establishmentRepository.save(newEstablishment);
-
-        return new ResponseEntity<>(newEstablishment.getId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<?> turnOn(Long establishmentId){
@@ -60,6 +62,10 @@ public class EstablishmentService {
             if (establishment.getPlaylist().getVotesQuantity() > 0){
                 establishment.setOff(false);
 
+                if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+
                 algorithmService.runAlgorithm(establishment);
 
                 establishmentRepository.save(establishment);
@@ -68,7 +74,7 @@ public class EstablishmentService {
 
                 thirdPartyService.setShuffleMode("true", establishment.getDeviceId(), establishment.getOwner().getAccessToken());
 
-                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken());
+                thirdPartyService.startPlayback(establishment.getPlaylist().getUri(), establishment.getOwner().getAccessToken(), establishment.getDeviceId());
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -82,6 +88,10 @@ public class EstablishmentService {
         if (establishment.isOff()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         establishment.setOff(true);
+
+        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
 
         AvailableGenresResponse availableGenresResponse = thirdPartyService.getAvailableGenres(establishment.getOwner().getAccessToken());
 
@@ -129,6 +139,14 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Playlist playlist = establishment.getPlaylist();
+
+        Collection<String> initialGenres = playlist.getInitialGenres();
+        for(String g : genres){
+            if(initialGenres.contains(g)){
+                return new ResponseEntity<>("Você não pode bloquear gêneros que estão sendo utilizados", HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+
         playlist.addBlockGenres(genres);
 
         establishment.setPlaylist(playlist);
@@ -234,6 +252,10 @@ public class EstablishmentService {
             playlistResponse = new PlaylistResponse(playlist.getId(), thirdPartyPlaylistResponse.name(), thirdPartyPlaylistResponse.description(), thirdPartyPlaylistResponse.images(), playlist.getInitialGenres() ,playlist.getBlockedGenres(), playlist.getGenres(), playlist.getVotesQuantity() > 0);
         }
 
+        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         EstablishmentResponse response = new EstablishmentResponse(establishment.getId(), establishment.getName(), establishment.getDeviceId(), establishment.isOff(), playlistResponse);
 
         return ResponseEntity.ok(response);
@@ -317,6 +339,10 @@ public class EstablishmentService {
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         if (thirdPartyService.getPlaybackState(establishment.getOwner().getAccessToken()).is_playing()){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -329,6 +355,10 @@ public class EstablishmentService {
     public ResponseEntity<?> pausePlayback(Long establishmentId){
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (establishment.getDeviceId() == null || establishment.getDeviceId().isBlank()){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
 
         if (!thirdPartyService.getPlaybackState(establishment.getOwner().getAccessToken()).is_playing()){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
